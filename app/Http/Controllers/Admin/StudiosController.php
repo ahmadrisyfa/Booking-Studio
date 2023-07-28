@@ -149,13 +149,20 @@ class StudiosController extends Controller
     public function destroy(Studios $studio)
     {
         abort_if(Gate::denies('studios_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        $imagePaths = json_decode($studio->image, true);
+        foreach ($imagePaths as $imagePath) {
+            Storage::disk('public')->delete('image-studios/' . $imagePath);
+        }
+
         $studio->delete();
 
         return redirect()->route('admin.studios.index')->with([
-            'message' => 'successfully deleted !',
+            'message' => 'Successfully deleted!',
             'alert-type' => 'success'
         ]);
     }
+
 
     /**
      * Delete all selected Permission at once.

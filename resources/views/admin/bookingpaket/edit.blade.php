@@ -45,7 +45,7 @@
                         <input type="text" disabled class="form-control datetimepicker" id="time_from" name="time_from" value="{{ old('time_from', $bookingpaket->time_from) }}" />
                     </div>
                     <div class="form-group">
-                        <label for="time_to">{{ __('Jam Mulai') }}</label>
+                        <label for="time_to">{{ __('Jam Selesai') }}</label>
                         <input type="text" disabled class="form-control datetimepicker" id="time_to" name="time_to" value="{{ old('time_to', $bookingpaket->time_to) }}" />
                     </div>
                     <div class="form-group">

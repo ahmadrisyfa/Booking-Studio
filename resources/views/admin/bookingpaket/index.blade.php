@@ -60,8 +60,7 @@
                             @if ($bookingpaket->services->jenis_paket == "Paket Perharga")
                             <td>Rp{{ number_format($bookingpaket->services->price  + $bookingpaket->services->denda,2,',','.')  }}</td>                                
                             @else                                
-                            <td>Rp{{ number_format($bookingpaket->services->price  * $bookingpaket->services->jam_paket +  $bookingpaket->services->denda,2,',','.')  }}</td>                                
-                          
+                            <td>Rp{{ number_format($bookingpaket->services->price  * $bookingpaket->services->jam_paket +  $bookingpaket->services->denda,2,',','.')  }}</td>                                                          
                             @endif
                             <td>{{ $bookingpaket->status }}</td>
                             <td>
@@ -125,7 +124,9 @@
                             <th>Jenis Paket</th>
                             <th>Jam Mulai</th>
                             <th>Jam Berakhir</th>
-                            <th>Total Harga</th>
+                            <th>Harga</th>
+                            <th>Denda</th>
+                            <th>Total</th>
                             <th>Status</th>
                             <th>Action</th>
                         </tr>
@@ -168,9 +169,11 @@
                             <td><button class="btn btn-info">{{ $bookingpaket->services->jenis_paket }}</button></td>
                             <td>{{ Carbon\Carbon::parse($bookingpaket->time_from)->format('M, d D H:i:s') }}</td>
                             <td>{{ Carbon\Carbon::parse($bookingpaket->time_to)->format('M, d D H:i:s') }}</td>
-                            <td>Rp @if ($elapsedHours >
+                            {{-- <td>Rp @if ($elapsedHours >
                                 0){{ number_format($bookingpaket->services->denda * $elapsedHours + $bookingpaket->grand_total,2,',','.')  }}@else
-                                {{ number_format($bookingpaket->grand_total,2,',','.')  }}@endif</td>
+                                {{ number_format($bookingpaket->grand_total,2,',','.')  }}@endif
+                            </td> --}}
+                            <td>Rp{{ number_format($bookingpaket->services->price,2,',','.')  }}</td>                                
                             <td>
                                 @php
 
@@ -187,21 +190,18 @@
                                     @if ($elapsedMinutes > 0)
                                     {{ $elapsedMinutes }} menit
                                     @endif
-                                    Total Semua:
-                                    @if ($bookingpaket->services->jenis_paket == "Paket Perharga")
-                                        Rp{{ number_format($bookingpaket->services->price  + $bookingpaket->services->denda * $elapsedHours,2,',','.')  }}
-                                    @else                                
-                                        Rp{{ number_format($bookingpaket->services->price  * $bookingpaket->services->jam_paket +  $bookingpaket->services->denda * $elapsedHours,2,',','.')  }}
-
-                                    @endif
+                                    Denda:
+                                    Rp{{ number_format($bookingpaket->services->denda * $elapsedHours,2,',','.')  }}
                                     @endif
                                 </p>
                                 @endif
-
-
-
-
                             </td>
+                            @if ($bookingpaket->services->jenis_paket == "Paket Perharga")
+                            <td>Rp{{ number_format($bookingpaket->services->price  + $bookingpaket->services->denda  * $elapsedHours,2,',','.')  }}</td>                                
+                            @else                                
+                            <td>Rp{{ number_format($bookingpaket->services->price  * $bookingpaket->services->jam_paket +  $bookingpaket->services->denda  * $elapsedHours,2,',','.')  }}</td>                                                          
+                            @endif
+                            <td>{{$bookingpaket->status}}</td>
                             <td>
                                 <div class="btn-group btn-group-sm">
                                     <a href="{{ route('admin.bookingpaket.edit', $bookingpaket->id) }}"

@@ -47,6 +47,12 @@
                         value="{{ old('price', $service->price) }}" />
                 </div>
                 <div class="form-group">
+                    <label for="jam_paket">{{ __('jumlah jam') }}</label>
+                    <input type="number" class="form-control" id="jam_paket" placeholder="{{ __('jam_paket') }}"
+                        name="jam_paket" value="{{ old('jam_paket',$service->jam_paket) }}" />
+                    <span class="text-secondary">Jika kosong maka user bisa mengisi jam terserah</span>
+                </div>
+                <div class="form-group">
                     <label for="name">{{ __('Denda') }}</label>
                     <input type="text" class="form-control" id="denda" placeholder="{{ __('denda') }}" name="denda"
                         value="{{ old('denda', $service->denda) }}" />
