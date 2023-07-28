@@ -80,13 +80,13 @@ class BookingpaketController extends Controller
 
         $startTime = $request->time_from; // Jam mulai booking dalam format datetime
         $endTime = $request->time_to;
-        $services_id = $request->services_id;
+        // $services_id = $request->services_id;
         $bookingExists = DB::table('bookingpakets')
-            ->where(function ($query) use ($startTime, $endTime, $services_id) {
-                $query->where(function ($query) use ($startTime, $endTime, $services_id) {
+            ->where(function ($query) use ($startTime, $endTime) {
+                $query->where(function ($query) use ($startTime, $endTime) {
                     $query->where('time_to', '>=', $startTime)
                         ->where('time_from', '<=', $endTime)
-                        ->where('services_id', $services_id)
+                        // ->where('services_id', $services_id)
                         ->whereDate('time_to', now());
                 });
             })
