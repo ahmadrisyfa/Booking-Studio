@@ -38,11 +38,12 @@
                             <th>Nomer studio</th>
                             <th>Jam Mulai</th>
                             <th>Jam Berakhir</th>
-                            <th>Total Jam</th>
+                            {{-- <th>Total Jam</th> --}}
                             <th>Total Penyewa</th>
-                            <th>Total Harga</th>
+                            <th>Harga</th>
+                            <th>Denda</th>
+                            <th>Total</th>
                             <th>Status</th>
-                            <!-- <th>Inpo</th> -->
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -58,15 +59,15 @@
                             <td>{{ $booking->studios->names }}</td>
                             <td>{{ Carbon\Carbon::parse($booking->time_from)->format('M, d D H:i:s') }}</td>
                             <td>{{ Carbon\Carbon::parse($booking->time_to)->format('M, d D H:i:s') }}</td>
-                            @php
+                            {{-- @php
                             $hour = date('h', strtotime(Carbon\Carbon::parse($booking->time_to)->format('H:i:s'))) -
                             date('h', strtotime(Carbon\Carbon::parse($booking->time_from)->format('H:i:s')))
                             @endphp
-                            <td>{{ $hour }} Jam</td>
+                            <td>{{ $hour }} Jam</td> --}}
                             <td>{{ number_format($booking->jml_org)  }} Orang</td>
-                            <td>Rp{{ number_format($booking->grand_total *$booking->jml_org * $hour ,2,',','.')  }}</td>
-                            <td>{{ $booking->status }}</td>
-                            <!-- <td>
+                            <td>Rp{{ number_format($booking->studios->price,2,',','.')  }}</td>
+                            <td>
+                                
                                 @php
                                 $startDateTime = new DateTime($booking->time_from);
                                 $endDateTime = new DateTime($booking->time_to);
@@ -104,14 +105,19 @@
                                     @if ($elapsedMinutes > 0)
                                     {{ $elapsedMinutes }} menit
                                     @endif
-                                    Denda: Rp{{ number_format($booking->grand_total * $elapsedHours,2,',','.')  }}
+                                    Denda: Rp{{ number_format($booking->studios->denda * $elapsedHours,2,',','.')  }}
                                     @endif
                                 </p>
                                 @endif
                                 @endif
+                            </td>
+                            @if ($isElapsed && ($elapsedHours > 0))                           
+                            <td>Rp{{ number_format($booking->studios->price  + $booking->studios->denda  * $elapsedHours,2,',','.')  }}</td>                                
+                            @else
+                            <td>Rp{{number_format($booking->studios->price,2,',','.')}}</td>                                                         
+                            @endif                          
+                            <td>{{ $booking->status }}</td>
 
-
-                            </td> -->
                             <td>
                                 <div class="btn-group btn-group-sm">
                                     <a href="{{ route('admin.bookings.edit', $booking->id) }}" class="btn btn-info">

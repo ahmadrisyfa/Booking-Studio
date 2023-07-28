@@ -12,32 +12,95 @@
                         <table class="table table-bordered">
                             <tr>
                                 <th>No</th>
-                                <th>Services</th>
                                 <th>Kode</th>
+                                <th>Nama Services</th>
+                                <th>Jenis Paket</th>
                                 <th>Jam Mulai</th>
                                 <th>Jam Berakhir</th>
-                                <th>Total Jam</th>
-                                <th>Total Harga</th>
+                                <th>Harga</th>
+                                <th>Denda</th>
+                                <th>Total</th>
                                 <th>Bukti Bayar</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
                             @forelse($bookingpaket as $key => $booking)
-                            <tr>
+                            <tr>                            
                                 <td>{{ $key + 1 }}</td>
-                                <td>{{ $booking->services->name }}</td>
                                 <td>{{ $booking->kode }}</td>
+                                <td>{{ $booking->services->name }}</td>
+                                <td>{{ $booking->services->jenis_paket }}</td>
                                 <td>{{ Carbon\Carbon::parse($booking->time_from)->format('M, d D H:i:s') }}
                                 </td>
                                 <td>{{ Carbon\Carbon::parse($booking->time_to)->format('M, d D H:i:s') }}
                                 </td>
-                                @php
+                                {{-- @php
                                 $hour = date('h', strtotime(Carbon\Carbon::parse($booking->time_to)->format('H:i:s'))) -
                                 date('h', strtotime(Carbon\Carbon::parse($booking->time_from)->format('H:i:s')));
                                 @endphp
-                                <td>{{ $hour }} Jam</td>
-                                <td>Rp{{ number_format($booking->grand_total * $booking->jml_org * $hour, 2, ',', '.') }}
+                                <td>{{ $hour }} Jam</td> --}}
+                                <td>Rp{{ number_format($booking->services->price ,2, ',', '.') }}</td>                             
+                                @php
+                                $startDateTime = new DateTime($booking->time_from);
+                                $endDateTime = new DateTime($booking->time_to);
+                                $currentDateTime = new DateTime('now', new DateTimeZone('Asia/Jakarta'));
+
+
+
+                                $interval = $startDateTime->diff($endDateTime);
+                                $hours = $interval->h;
+                                $minutes = $interval->i;
+
+
+                                $isStarted = $currentDateTime > $startDateTime;
+                                $diff=$endDateTime->diff($currentDateTime);
+
+                                // Menentukan apakah waktu saat ini melebihi waktu selesai
+                                $isElapsed = $currentDateTime > $endDateTime;
+
+                                // Menghitung total menit yang telah berlalu jika waktu telah melewati waktu selesai
+                                $totalMinutes = ($isElapsed) ? ($diff->days * 24 * 60) + ($diff->h * 60) + $diff->i
+                                : 0;
+
+                                // Mendapatkan jumlah jam dan menit yang telah berlalu
+                                $elapsedHours = floor($totalMinutes / 60) -1;
+                                $elapsedMinutes = $totalMinutes % 60;
+                                @endphp
+                                  <td>
+                                    @php
+    
+                                    @endphp
+                                    {{-- Kode Blade untuk menampilkan jumlah jam --}}
+                                    Durasi: {{ $hours }} Jam @if ($minutes > 0){{ $minutes }} Menit @endif
+                                    <br>
+                                    {{-- Kode Blade untuk menampilkan jam dan menit yang telah berlalu sejak waktu selesai --}}
+                                    @if ($isElapsed && ($elapsedHours > 0))
+                                    <p class="text-danger">
+                                        Waktu telah berlalu sejak selesai:
+                                        @if ($elapsedHours > 0)
+                                        {{ $elapsedHours }} jam
+                                        @if ($elapsedMinutes > 0)
+                                        {{ $elapsedMinutes }} menit
+                                        @endif
+                                        Denda:
+                                        Rp{{ number_format($booking->services->denda * $elapsedHours,2,',','.')  }}
+                                        @endif
+                                    </p>
+                                    @endif
                                 </td>
+                                @if ($booking->services->jenis_paket == "Paket Perharga")
+                                @if ($isElapsed && ($elapsedHours > 0))                           
+                                    <td>Rp{{ number_format($booking->services->price  + $booking->services->denda  * $elapsedHours,2,',','.')  }}</td>                                
+                                @else
+                                    <td>Rp{{number_format($booking->services->price,2,',','.')}}</td>                                                         
+                                @endif
+                                @else     
+                                @if ($isElapsed && ($elapsedHours > 0))                           
+                                    <td>Rp{{ number_format($booking->services->price  * $hours +  $booking->services->denda  * $elapsedHours,2,',','.')  }}</td> 
+                                @else
+                                    <td>Rp{{number_format($booking->services->price,2,',','.')}}</td>                                                         
+                                @endif
+                                @endif
                                 <td><button type="button" class="btn btn-primary" data-toggle="modal"
                                         data-target="#exampleModalCenter{{ $key + 1 }}">
                                         Lihat

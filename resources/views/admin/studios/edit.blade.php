@@ -40,6 +40,10 @@
                         <label for="price">{{ __('Harga per Orang') }}</label>
                         <input type="number" class="form-control" id="org" placeholder="{{ __('org') }}" name="org" value="{{ old('org', $studio->org) }}" />
                     </div>
+                    <div class="form-group">
+                        <label for="price">{{ __('Denda') }}</label>
+                        <input type="number" class="form-control" id="denda" placeholder="{{ __('denda') }}" name="denda" value="{{ old('denda', $studio->denda) }}" />
+                    </div>
                     <div class="form-group {{ $errors->has('photo') ? 'has-error' : '' }}">
                         @if(json_decode($studio->image))
                         <div>

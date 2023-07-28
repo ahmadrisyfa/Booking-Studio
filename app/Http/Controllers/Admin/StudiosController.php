@@ -62,6 +62,7 @@ class StudiosController extends Controller
         'names' => $request->input('names'),
         'price' => $request->input('price'),
         'org' => $request->input('org'),
+        'denda' => $request->input('denda'),
         'image' => json_encode($imagePaths),
         'status' => $request->input('status', 0),
          ]);
@@ -130,6 +131,7 @@ class StudiosController extends Controller
         $service->names = $request->input('names');
         $service->price = $request->input('price');
         $service->org = $request->input('org');    
+        $service->denda = $request->input('denda');    
         $service->status = $request->input('status', 0);
 
         $service->save();

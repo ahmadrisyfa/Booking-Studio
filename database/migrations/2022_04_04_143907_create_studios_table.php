@@ -18,6 +18,7 @@ class CreateStudiosTable extends Migration
             $table->string('names');
             $table->integer('price');
             $table->integer('org');
+            $table->string('denda');
             $table->json('image')->nullable();
             $table->tinyInteger('status')->default(0);
             $table->timestamps();

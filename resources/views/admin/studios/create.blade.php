@@ -40,6 +40,10 @@
                         <input type="number" class="form-control" id="org" placeholder="{{ __('org') }}" name="org" value="{{ old('org') }}" />
                     </div>
                     <div class="form-group">
+                        <label for="price">{{ __('Denda') }}</label>
+                        <input type="number" class="form-control" id="denda" placeholder="{{ __('denda') }}" name="denda" value="{{ old('denda') }}" />
+                    </div>
+                    <div class="form-group">
                         <label for="photo">Photo</label>
                         <input type="file" class="form-control" id="image" placeholder="{{ __('image') }}" name="image[]" multiple />
 
