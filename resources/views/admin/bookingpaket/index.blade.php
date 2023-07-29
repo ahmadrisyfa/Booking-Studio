@@ -186,6 +186,8 @@
                                         @if ($isElapsed && $elapsedHours > 0)
                                             @if ($bookingpaket->status == 'Sukses')
                                             <p class="text-success">Status Telah Sukses</p>
+                                            @elseif ($bookingpaket->status == 'Batal')
+                                            <p class="text-success">Status Telah Di Batalkan</p>
                                             @else
                                             <p class="text-danger">
                                                 Waktu telah berlalu sejak selesai:
@@ -205,6 +207,8 @@
                                         @if ($isElapsed && $elapsedHours > 0)
                                             @if ($bookingpaket->status == 'Sukses')
                                             <td>Rp{{ number_format($bookingpaket->grand_total, 2, ',', '.') }}</td>
+                                            @elseif ($bookingpaket->status == 'Batal')
+                                            <td>Rp{{ number_format($bookingpaket->grand_total, 2, ',', '.') }}</td>
                                             @else
                                             <td>Rp{{ number_format($bookingpaket->services->price + $bookingpaket->services->denda * $elapsedHours, 2, ',', '.') }}
                                             </td>
@@ -216,6 +220,8 @@
                                         @if ($isElapsed && $elapsedHours > 0)
                                             @if ($bookingpaket->status == 'Sukses')
                                                 <td>Rp{{ number_format($bookingpaket->grand_total, 2, ',', '.') }}</td>
+                                                @elseif ($bookingpaket->status == 'Batal')
+                                                    <td>Rp{{ number_format($bookingpaket->grand_total, 2, ',', '.') }}</td>
                                             @else
                                                 <td>Rp{{ number_format($bookingpaket->services->price * $hours + $bookingpaket->services->denda * $elapsedHours, 2, ',', '.') }}
                                                 </td>
@@ -223,6 +229,8 @@
                                         @else
                                             @if ($bookingpaket->status == 'Sukses')
                                                 <td>Rp{{ number_format($bookingpaket->grand_total, 2, ',', '.') }}</td>
+                                                @elseif ($bookingpaket->status == 'Batal')
+                                                    <td>Rp{{ number_format($bookingpaket->grand_total, 2, ',', '.') }}</td>
                                             @else
                                                 <td>Rp{{ number_format($bookingpaket->services->price * $hours + $bookingpaket->services->denda * $elapsedHours, 2, ',', '.') }}
                                                 </td>

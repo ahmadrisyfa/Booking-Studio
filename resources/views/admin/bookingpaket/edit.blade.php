@@ -59,7 +59,9 @@
             <form action="{{ url('admin/bookingpaket/'. $bookingpaket->id) }}" method="POST">
                 @csrf
                 @method('put')
-                @if($bookingpaket->status == 'Sukses')
+                @if($bookingpaket->status == 'Sukses')                
+                <input type="hidden" name="grand_total" value="{{$bookingpaket->grand_total}}">
+                @elseif($bookingpaket->status == 'Batal')
                 <input type="hidden" name="grand_total" value="{{$bookingpaket->grand_total}}">
                 @else
                 <input type="hidden" name="grand_total" value="{{$total}}">

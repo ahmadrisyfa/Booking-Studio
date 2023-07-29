@@ -53,6 +53,9 @@
                     @endphp
                     @if ($booking->status == 'Sukses')
                         <input type="hidden" name="grand_total" value="{{ $booking->grand_total }}">
+                    @elseif ($booking->status == 'Batal')
+                        <input type="hidden" name="grand_total" value="{{ $booking->grand_total }}">
+
                     @else
                         <input type="hidden" name="grand_total" value="{{ $total }}">
                     @endif
