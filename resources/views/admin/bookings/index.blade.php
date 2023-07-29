@@ -98,6 +98,9 @@
                                 @if($startDateTime->format('Y-m-d') == $currentDateTime->format('Y-m-d'))
                                 {{-- Kode Blade untuk menampilkan jam dan menit yang telah berlalu sejak waktu selesai --}}
                                 @if ($isElapsed && ($elapsedHours > 0))
+                                @if ($booking->status == 'Sukses')
+                                <p class="text-success">Status Telah Sukses</p>
+                                @else
                                 <p class="text-danger">
                                     Waktu telah berlalu sejak selesai:
                                     @if ($elapsedHours > 0)
@@ -108,6 +111,7 @@
                                     Denda: Rp{{ number_format($booking->studios->denda * $elapsedHours,2,',','.')  }}
                                     @endif
                                 </p>
+                                @endif
                                 @endif
                                 @endif
                             </td>

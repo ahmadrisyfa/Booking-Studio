@@ -75,6 +75,9 @@
                                     <br>
                                     {{-- Kode Blade untuk menampilkan jam dan menit yang telah berlalu sejak waktu selesai --}}
                                     @if ($isElapsed && ($elapsedHours > 0))
+                                    @if ($booking->status == 'Sukses')
+                                    <p class="text-success">Status Telah Sukses</p>
+                                    @else
                                     <p class="text-danger">
                                         Waktu telah berlalu sejak selesai:
                                         @if ($elapsedHours > 0)
@@ -87,18 +90,19 @@
                                         @endif
                                     </p>
                                     @endif
+                                    @endif
                                 </td>
                                 @if ($booking->services->jenis_paket == "Paket Perharga")
                                 @if ($isElapsed && ($elapsedHours > 0))                           
                                     <td>Rp{{ number_format($booking->services->price  + $booking->services->denda  * $elapsedHours,2,',','.')  }}</td>                                
                                 @else
-                                    <td>Rp{{number_format($booking->services->price,2,',','.')}}</td>                                                         
+                                    <td>Rp{{number_format($booking->grand_total,2,',','.')}}</td>                                                         
                                 @endif
                                 @else     
                                 @if ($isElapsed && ($elapsedHours > 0))                           
                                     <td>Rp{{ number_format($booking->services->price  * $hours +  $booking->services->denda  * $elapsedHours,2,',','.')  }}</td> 
                                 @else
-                                    <td>Rp{{number_format($booking->services->price,2,',','.')}}</td>                                                         
+                                    <td>Rp{{number_format($booking->grand_total,2,',','.')}}</td>                                                         
                                 @endif
                                 @endif
                                 <td><button type="button" class="btn btn-primary" data-toggle="modal"

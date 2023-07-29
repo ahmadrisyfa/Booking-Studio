@@ -60,9 +60,9 @@
                 @csrf
                 @method('put')
                 @if($bookingpaket->status == 'Sukses')
-                <input type="text" name="grand_total" value="{{$bookingpaket->grand_total}}">
+                <input type="hidden" name="grand_total" value="{{$bookingpaket->grand_total}}">
                 @else
-                <input type="text" name="grand_total" value="{{$total}}">
+                <input type="hidden" name="grand_total" value="{{$total}}">
                 @endif
                 <div class="form-group">
                     <label for="time_from">{{ __('Nama Penyewa') }}</label>

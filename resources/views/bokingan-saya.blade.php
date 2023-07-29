@@ -72,6 +72,9 @@
                                     @if($startDateTime->format('Y-m-d') == $currentDateTime->format('Y-m-d'))
                                     {{-- Kode Blade untuk menampilkan jam dan menit yang telah berlalu sejak waktu selesai --}}
                                     @if ($isElapsed && ($elapsedHours > 0))
+                                    @if ($booking->status == 'Sukses')
+                                    <p class="text-success">Status Telah Sukses</p>
+                                    @else
                                     <p class="text-danger">
                                         Waktu telah berlalu sejak selesai:
                                         @if ($elapsedHours > 0)
@@ -84,11 +87,12 @@
                                     </p>
                                     @endif
                                     @endif
+                                    @endif
                                 </td>
                                 @if ($isElapsed && ($elapsedHours > 0))                           
                                     <td>Rp{{ number_format($booking->studios->price  + $booking->studios->denda  * $elapsedHours,2,',','.')  }}</td>                                
                                 @else
-                                    <td>Rp{{number_format($booking->studios->price,2,',','.')}}</td>                                                         
+                                    <td>Rp{{number_format($booking->grand_total,2,',','.')}}</td>                                                         
                                 @endif      
                                 <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter{{ $key + 1 }}">
                                         Lihat</button>
