@@ -199,8 +199,12 @@
                                     </td>
                                     @if ($bookingpaket->services->jenis_paket == 'Paket Perharga')
                                         @if ($isElapsed && $elapsedHours > 0)
-                                            <td>Rp{{ number_format($bookingpaket->services->price + $bookingpaket->services->denda * $elapsedHours, 2, ',', '.') }}
-                                            </td>
+                                            @if ($bookingpaket->status == 2)
+                                                <td>Rp{{ number_format($bookingpaket->services->price + $bookingpaket->services->denda * $elapsedHours, 2, ',', '.') }}
+                                                </td>
+                                            @else
+                                                <td>Rp{{ number_format($bookingpaket->grand_total, 2, ',', '.') }}</td>
+                                            @endif
                                         @else
                                             <td>Rp{{ number_format($bookingpaket->grand_total, 2, ',', '.') }}</td>
                                         @endif
