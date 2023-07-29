@@ -92,19 +92,34 @@
                                     @endif
                                     @endif
                                 </td>
-                                @if ($booking->services->jenis_paket == "Paket Perharga")
-                                @if ($isElapsed && ($elapsedHours > 0))                           
-                                    <td>Rp{{ number_format($booking->services->price  + $booking->services->denda  * $elapsedHours,2,',','.')  }}</td>                                
+                                @if ($booking->services->jenis_paket == 'Paket Perharga')
+                                @if ($isElapsed && $elapsedHours > 0)
+                                    @if ($booking->status == 'Sukses')
+                                    <td>Rp{{ number_format($booking->grand_total, 2, ',', '.') }}</td>
+                                    @else
+                                    <td>Rp{{ number_format($booking->services->price + $booking->services->denda * $elapsedHours, 2, ',', '.') }}
+                                    </td>
+                                    @endif
                                 @else
-                                    <td>Rp{{number_format($booking->grand_total,2,',','.')}}</td>                                                         
+                                    <td>Rp{{ number_format($booking->grand_total, 2, ',', '.') }}</td>
                                 @endif
-                                @else     
-                                @if ($isElapsed && ($elapsedHours > 0))                           
-                                    <td>Rp{{ number_format($booking->services->price  * $hours +  $booking->services->denda  * $elapsedHours,2,',','.')  }}</td> 
+                            @else
+                                @if ($isElapsed && $elapsedHours > 0)
+                                    @if ($booking->status == 'Sukses')
+                                        <td>Rp{{ number_format($booking->grand_total, 2, ',', '.') }}</td>
+                                    @else
+                                        <td>Rp{{ number_format($booking->services->price * $hours + $booking->services->denda * $elapsedHours, 2, ',', '.') }}
+                                        </td>
+                                    @endif
                                 @else
-                                    <td>Rp{{number_format($booking->grand_total,2,',','.')}}</td>                                                         
+                                    @if ($booking->status == 'Sukses')
+                                        <td>Rp{{ number_format($booking->grand_total, 2, ',', '.') }}</td>
+                                    @else
+                                        <td>Rp{{ number_format($booking->services->price * $hours + $booking->services->denda * $elapsedHours, 2, ',', '.') }}
+                                        </td>
+                                    @endif
                                 @endif
-                                @endif
+                            @endif
                                 <td><button type="button" class="btn btn-primary" data-toggle="modal"
                                         data-target="#exampleModalCenter{{ $key + 1 }}">
                                         Lihat

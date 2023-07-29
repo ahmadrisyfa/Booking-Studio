@@ -46,7 +46,7 @@
                                 <th>Studio</th>
                                 <th>Jam Mulai</th>
                                 <th>Jam Berakhir</th>
-                                <th>Total Jam</th>
+                                {{-- <th>Total Jam</th> --}}
                                 <th>Total Penyewa</th>
                                 <th>Total Harga</th>
                                 <th>Status</th>
@@ -63,12 +63,12 @@
                                     <td>{{ $booking->studios->names }}</td>
                                     <td>{{ Carbon\Carbon::parse($booking->time_from)->format('M, d D H:i:s') }}</td>
                                     <td>{{ Carbon\Carbon::parse($booking->time_to)->format('M, d D H:i:s') }}</td>
-                                    @php
+                                    {{-- @php
                                         $hour = date('h', strtotime(Carbon\Carbon::parse($booking->time_to)->format('H:i:s'))) - date('h', strtotime(Carbon\Carbon::parse($booking->time_from)->format('H:i:s')));
                                     @endphp
-                                    <td>{{ $hour }} Jam</td>
+                                    <td>{{ $hour }} Jam</td> --}}
                                     <td>{{ number_format($booking->jml_org) }} Orang</td>
-                                    <td>Rp{{ number_format($booking->grand_total * $booking->jml_org * $hour, 2, ',', '.') }}
+                                    <td>Rp{{ number_format($booking->grand_total,2, ',', '.') }}
                                     </td>
                                     <td>{{ $booking->status }}</td>
                                 </tr>
