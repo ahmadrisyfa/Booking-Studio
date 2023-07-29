@@ -184,6 +184,8 @@
                                         <br>
                                         {{-- Kode Blade untuk menampilkan jam dan menit yang telah berlalu sejak waktu selesai --}}
                                         @if ($isElapsed && $elapsedHours > 0)
+                                            @if ($bookingpaket->services->status == 'Sukses')
+
                                             <p class="text-danger">
                                                 Waktu telah berlalu sejak selesai:
                                                 @if ($elapsedHours > 0)
@@ -195,11 +197,14 @@
                                                     Rp{{ number_format($bookingpaket->services->denda * $elapsedHours, 2, ',', '.') }}
                                                 @endif
                                             </p>
+                                            @else
+                                            <p class="text-success">Status Telah Sukses</p>
+                                            @endif
                                         @endif
                                     </td>
                                     @if ($bookingpaket->services->jenis_paket == 'Paket Perharga')
                                         @if ($isElapsed && $elapsedHours > 0)
-                                            @if ($bookingpaket->status == 2)
+                                            @if ($bookingpaket->status == 'Sukses')
                                                 <td>Rp{{ number_format($bookingpaket->services->price + $bookingpaket->services->denda * $elapsedHours, 2, ',', '.') }}
                                                 </td>
                                             @else
@@ -210,15 +215,15 @@
                                         @endif
                                     @else
                                         @if ($isElapsed && $elapsedHours > 0)
-                                            @if ($bookingpaket->status == 2)
-                                                <td>{{ $bookingpaket->grand_total }}</td>
+                                            @if ($bookingpaket->status == 'Sukses')
+                                                <td>Rp{{ number_format($bookingpaket->grand_total, 2, ',', '.') }}</td>
                                             @else
                                                 <td>Rp{{ number_format($bookingpaket->services->price * $hours + $bookingpaket->services->denda * $elapsedHours, 2, ',', '.') }}
                                                 </td>
                                             @endif
                                         @else
-                                            @if ($bookingpaket->status == 2)
-                                                <td>{{ $bookingpaket->grand_total }}</td>
+                                            @if ($bookingpaket->status == 'Sukses')
+                                                <td>Rp{{ number_format($bookingpaket->grand_total, 2, ',', '.') }}</td>
                                             @else
                                                 <td>Rp{{ number_format($bookingpaket->services->price * $hours + $bookingpaket->services->denda * $elapsedHours, 2, ',', '.') }}
                                                 </td>
