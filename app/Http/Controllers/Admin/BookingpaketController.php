@@ -115,13 +115,18 @@ class BookingpaketController extends Controller
                     ]);
                 }
             }
+            if ($services->jenis_paket == "Paket Perharga") {
+                $total = $services->price;
+            } else {
+                $total = $services->price * $hours;
+            }
             $bookingpaket = Bookingpaket::create([
                 'kode' => self::nomat(Auth()->user()->name),
                 'services_id' => $request->services_id,
                 'time_from' =>  $request->time_from,
                 'time_to' =>  $request->time_to,
                 'user_id' => auth()->id(),
-                'grand_total' => $services->price * $hours,
+                'grand_total' => $total,
                 'status' => !isset($request->status) ? 0 : $request->status
             ]);
 
@@ -188,7 +193,8 @@ class BookingpaketController extends Controller
         //     'status' => !isset($request->status) ? 0 : $request->status
         // ]);
         $daftar = [
-            'status' => 'required'
+            'status' => 'required',
+            'grand_total' => 'required'
         ];
         $validasi = $request->validate($daftar);
 

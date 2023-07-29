@@ -66,6 +66,7 @@ Route::group(['middleware' => ['isAdmin', 'auth'], 'prefix' => 'admin', 'as' => 
     Route::post('services/media', [\App\Http\Controllers\Admin\ServicesController::class, 'storeMedia'])->name('services.storeMedia');
 
     Route::resource('bookingpaket', \App\Http\Controllers\Admin\BookingpaketController::class);
+    Route::get('admin/bookingpaket/edit/{id}/{total}', [\App\Http\Controllers\Admin\BookingpaketController::class, 'edit']);
     Route::delete('bookingpaket_mass_destroy', [\App\Http\Controllers\Admin\BookingpaketController::class, 'massDestroy'])->name('bookingpaket.mass_destroy');
 
     Route::resource('laporan', \App\Http\Controllers\Admin\LaporanPaketController::class);
