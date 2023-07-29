@@ -153,7 +153,7 @@ class BookingController extends Controller
         $studios = Studios::findOrFail($request->studios_id);
 
         $booking->update($request->validated() + [
-            'grand_total' => $studios->price,
+            'grand_total' => $request->grand_total,
             'jml_org' => $request->jml_org,
             'status' => !isset($request->status) ? 0 : $request->status
         ]);
