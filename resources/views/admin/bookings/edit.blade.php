@@ -28,7 +28,34 @@
             <div class="card-body">
                 <form action="{{ route('admin.bookings.update', $booking->id) }}" method="POST">
                     @csrf
-                    @method('put')
+                    @method('put') @php
+                        $startDateTime = new DateTime($booking->time_from);
+                        $endDateTime = new DateTime($booking->time_to);
+                        $currentDateTime = new DateTime('now', new DateTimeZone('Asia/Jakarta'));
+                        
+                        $interval = $startDateTime->diff($endDateTime);
+                        $hours = $interval->h;
+                        $minutes = $interval->i;
+                        
+                        $isStarted = $currentDateTime > $startDateTime;
+                        $diff = $endDateTime->diff($currentDateTime);
+                        
+                        // Menentukan apakah waktu saat ini melebihi waktu selesai
+                        $isElapsed = $currentDateTime > $endDateTime;
+                        
+                        // Menghitung total menit yang telah berlalu jika waktu telah melewati waktu selesai
+                        $totalMinutes = $isElapsed ? $diff->days * 24 * 60 + $diff->h * 60 + $diff->i : 0;
+                        
+                        // Mendapatkan jumlah jam dan menit yang telah berlalu
+                        $elapsedHours = floor($totalMinutes / 60) - 1;
+                        $elapsedMinutes = $totalMinutes % 60;
+                        $total = $booking->studios->price + $booking->studios->denda * $elapsedHours;
+                    @endphp
+                    @if ($booking->status == 'Sukses')
+                        <input type="hidden" name="grand_total" value="{{ $booking->grand_total }}">
+                    @else
+                        <input type="hidden" name="grand_total" value="{{ $total }}">
+                    @endif
                     <div class="form-group">
                         <label for="studios_id">{{ __('Nomer Studio') }}</label>
                         <select name="studios_id" readonly id="studios_id" class="form-control">
@@ -40,7 +67,9 @@
                     </div>
                     <div class="form-group">
                         <label for="price">{{ __('Jumlah Orang') }}</label>
-                        <input type="number" readonly class="form-control" required  id="jml_org" placeholder="{{ __('jumlah org') }}" name="jml_org"value="{{ old('jml_org', $booking->jml_org) }}" />
+                        <input type="number" readonly class="form-control" required id="jml_org"
+                            placeholder="{{ __('jumlah org') }}"
+                            name="jml_org"value="{{ old('jml_org', $booking->jml_org) }}" />
                     </div>
                     <div class="form-group">
                         <label for="time_from">{{ __('Jam Mulai') }}</label>
@@ -71,7 +100,8 @@
                                     </div>
                                     <div class="modal-body">
                                         @isset($booking->bukti_bayar)
-                                            <img class="w-100" src="{{ asset('storage/'.$booking->bukti_bayar) }}" alt="">
+                                            <img class="w-100" src="{{ asset('storage/' . $booking->bukti_bayar) }}"
+                                                alt="">
                                         @else
                                             <p class="text-danger">
                                                 Belum ada bukti baya
