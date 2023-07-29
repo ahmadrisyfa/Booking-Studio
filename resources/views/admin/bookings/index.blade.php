@@ -91,6 +91,14 @@
                                             $elapsedMinutes = $totalMinutes % 60;
                                             $total = $booking->studios->price + $booking->studios->denda * $elapsedHours;
                                         @endphp
+                                         @php
+                                            
+                                         @endphp
+                                         {{-- Kode Blade untuk menampilkan jumlah jam --}}
+                                         Durasi: {{ $hours }} Jam @if ($minutes > 0)
+                                             {{ $minutes }} Menit
+                                         @endif
+                                         <br>
                                         @if ($startDateTime->format('Y-m-d') == $currentDateTime->format('Y-m-d'))
                                             {{-- Kode Blade untuk menampilkan jam dan menit yang telah berlalu sejak waktu selesai --}}
                                             @if ($isElapsed && $elapsedHours > 0)
