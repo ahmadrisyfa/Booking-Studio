@@ -40,41 +40,39 @@
                                 @endphp
                                 <td>{{ $hour }} Jam</td> --}}
                                 <td>{{ number_format($booking->jml_org) }} Orang</td>
-                                <td>Rp{{ number_format($booking->studios->price, 2, ',', '.') }}</td>
+                                @php
+                                    $startDateTime = new DateTime($booking->time_from);
+                                    $endDateTime = new DateTime($booking->time_to);
+                                    $currentDateTime = new DateTime('now', new DateTimeZone('Asia/Jakarta'));
+                                    
+                                    $interval = $startDateTime->diff($endDateTime);
+                                    $hours = $interval->h;
+                                    $minutes = $interval->i;
+                                    
+                                    $isStarted = $currentDateTime > $startDateTime;
+                                    $diff = $endDateTime->diff($currentDateTime);
+                                    
+                                    // Menentukan apakah waktu saat ini melebihi waktu selesai
+                                    $isElapsed = $currentDateTime > $endDateTime;
+                                    
+                                    // Menghitung total menit yang telah berlalu jika waktu telah melewati waktu selesai
+                                    $totalMinutes = $isElapsed ? $diff->days * 24 * 60 + $diff->h * 60 + $diff->i : 0;
+                                    
+                                    // Mendapatkan jumlah jam dan menit yang telah berlalu
+                                    $elapsedHours = floor($totalMinutes / 60) - 1;
+                                    $elapsedMinutes = $totalMinutes % 60;
+                                    $total = $booking->studios->price + $booking->studios->denda * $elapsedHours;
+                                @endphp
+                                
+                                <td>Rp{{ number_format($booking->studios->price * $booking->jml_org * $hours, 2, ',', '.') }}</td>
                                 <td>
 
-                                    @php
-                                        $startDateTime = new DateTime($booking->time_from);
-                                        $endDateTime = new DateTime($booking->time_to);
-                                        $currentDateTime = new DateTime('now', new DateTimeZone('Asia/Jakarta'));
-                                        
-                                        $interval = $startDateTime->diff($endDateTime);
-                                        $hours = $interval->h;
-                                        $minutes = $interval->i;
-                                        
-                                        $isStarted = $currentDateTime > $startDateTime;
-                                        $diff = $endDateTime->diff($currentDateTime);
-                                        
-                                        // Menentukan apakah waktu saat ini melebihi waktu selesai
-                                        $isElapsed = $currentDateTime > $endDateTime;
-                                        
-                                        // Menghitung total menit yang telah berlalu jika waktu telah melewati waktu selesai
-                                        $totalMinutes = $isElapsed ? $diff->days * 24 * 60 + $diff->h * 60 + $diff->i : 0;
-                                        
-                                        // Mendapatkan jumlah jam dan menit yang telah berlalu
-                                        $elapsedHours = floor($totalMinutes / 60) - 1;
-                                        $elapsedMinutes = $totalMinutes % 60;
-                                        $total = $booking->studios->price + $booking->studios->denda * $elapsedHours;
-                                    @endphp
-                                     @php
-                                        
-                                     @endphp
                                      {{-- Kode Blade untuk menampilkan jumlah jam --}}
                                      Durasi: {{ $hours }} Jam @if ($minutes > 0)
                                          {{ $minutes }} Menit
                                      @endif
                                      <br>
-                                    @if ($startDateTime->format('Y-m-d') == $currentDateTime->format('Y-m-d'))
+                                    {{-- @if ($startDateTime->format('Y-m-d') == $currentDateTime->format('Y-m-d')) --}}
                                         {{-- Kode Blade untuk menampilkan jam dan menit yang telah berlalu sejak waktu selesai --}}
                                         @if ($isElapsed && $elapsedHours > 0)
                                             @if ($booking->status == 'Sukses')
@@ -95,7 +93,7 @@
                                                 </p>
                                             @endif
                                         @endif
-                                    @endif
+                                    {{-- @endif --}}
                                 </td>
                                 @if ($isElapsed && $elapsedHours > 0)
                                     @if ($booking->status == 'Sukses')
@@ -103,12 +101,12 @@
                                     @elseif ($booking->status == 'Batal')
                                         <td>Rp{{ number_format($booking->grand_total, 2, ',', '.') }}</td>
                                     @else
-                                        <td>Rp{{ number_format($booking->studios->price + $booking->studios->denda * $elapsedHours, 2, ',', '.') }}
+                                        <td>Rp{{ number_format($booking->studios->price * $booking->jml_org  * $hours + $booking->studios->denda * $elapsedHours, 2, ',', '.') }}
                                         </td>
                                     @endif
                                 @else
-                                    <td>Rp{{ number_format($booking->studios->price, 2, ',', '.') }}</td>
-                                @endif    
+                                    <td>Rp{{ number_format($booking->studios->price * $booking->jml_org * $hours, 2, ',', '.') }}</td>
+                                @endif
                                 <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter{{ $key + 1 }}">
                                         Lihat</button>
                                     <div class="modal fade" id="exampleModalCenter{{ $key + 1 }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">

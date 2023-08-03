@@ -1,6 +1,24 @@
 @extends('layouts.user')
 @section('content')
+<style>   
+    .footer {
+        padding: 20px;
+        color: #ADB5BD;
+    }
 
+    .footer hr {
+        background-color: #ADB5BD;
+        margin-top: 10px;
+        margin-bottom: 10px;
+
+    }
+
+    .footer-logo {
+        width: 50px;
+        display: inline-block;
+        vertical-align: middle;
+    }  
+</style>
 <div class="jumbotron text-white text-center" style="background: linear-gradient(
     rgba(0, 0, 0, 0.7),
     rgba(0, 0, 0, 0.7)
@@ -155,7 +173,7 @@
             <div class="col-12">
                 <h3 class="fw-bold">Daftar Paket</h3>
             </div>
-            <div class="collumn">
+            {{-- <div class="collumn"> --}}
                 @foreach ($services as $services)
                 <div class="modal fade" id="staticBackdrop{{$services->id}}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel{{$services->id}}" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
@@ -221,7 +239,7 @@
                     </div>
                 </div>
                 @endforeach
-            </div>
+            {{-- </div> --}}
         </div>
     </div>
     <br><br>
@@ -236,5 +254,75 @@
             width="1110" height="420" style="border:0;" allowfullscreen="" loading="lazy"
             referrerpolicy="no-referrer-when-downgrade"></iframe>
     </div>
+</div>
+<div class="footer-website" style="background-color:#151E28;">
+    <footer class="footer">     
+        <div class="container pt-3">
+            <div class="row">
+                <div class="col-md-12" style="text-align: center">
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <h5 style="color:white;margin-bottom:10px">Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque ad, rem iusto vero deleniti, atque voluptas est quas libero ratione quo quisquam nihil tempore optio eaque sapiente voluptatem, ut quam!</h5>
+                        </div>
+                        <div class="col-md-6">                                               
+                            <p><i class="bi bi-geo-alt pr-2"></i>Alamat: Panjen, Wedomartani, Ngemplak, Kenayan, Wedomartani, Kec. Sleman, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55584</p>
+                            <p><i class="bi bi-geo-alt pr-2"></i>Email: contoh@gmmil.com</p>
+
+                        </div>
+                        <div class="col-md-6">
+
+                            <p>(+62) - 0895-3212-17600</p>
+                            <p>No Rekening: 54678724648844</p>
+                        </div>
+                    </div>
+
+                </div>
+                {{-- <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <ul style="list-style:none">
+                                <li><a style="color: #ADB5BD;" href="#">Home</a></li>
+                                <li><a style="color: #ADB5BD;" href="#">Tanya Jawab</a></li>
+                                <li><a style="color: #ADB5BD;" href="#">Hubungi Kami</a></li>
+                                <li><a style="color: #ADB5BD;" href="#">Produk Rekomendasi</a></li>
+                                <li><a style="color: #ADB5BD;" href="#">Masuk</a></li>
+                                <li><a style="color: #ADB5BD;" href="#">Daftar</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4">
+                            <ul style="list-style:none">
+                                <li><a style="color: #ADB5BD;">Original Tart</a></li>
+                                <li><a style="color: #ADB5BD;">Fruit Tart</a></li>
+                                <li><a style="color: #ADB5BD;">Hampers</a></li>
+                                <li><a style="color: #ADB5BD;">Topping</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4">
+                            <ul style="list-style:none">
+                                <li><a href="#" style="color: #ADB5BD;"><i
+                                            class="bi bi-facebook pr-2"></i>Facebook</a></li>
+                                <li><a href="#" style="color: #ADB5BD;"><i
+                                            class="bi bi-instagram pr-2"></i>Instagram</a></li>
+                                <li><a href="#" style="color: #ADB5BD;"><i
+                                            class="bi bi-twitter pr-2"></i>Twitter</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div> --}}
+            </div>
+        </div>
+        <div class="container mt-5">
+            <div class="row justify-content-between d-flex">
+                <div class="col-md-6">
+                 
+                    <p>© Copyright 2023 | Ilham Alamsyah </p>
+                </div>
+                <div class="col-md-6 text-right">
+                    <p><a href="#" style="color: #ADB5BD;">FAQ | Kontak Kami</a></p>
+                </div>
+            </div>
+        </div>
+
+    </footer>
 </div>
 @endsection

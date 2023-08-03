@@ -95,6 +95,17 @@
             },
             stepping: 10
         });
+        $('form').submit(function(event) {
+        var time_from = moment($('#time_from').val(), 'YYYY-MM-DD HH:mm');
+        var time_to = moment($('#time_to').val(), 'YYYY-MM-DD HH:mm');
+
+        if (time_to.isBefore(time_from)) {
+            alert('Jam Akhir tidak boleh kurang dari Dari Jam Mulai.');
+            event.preventDefault();
+        } else {
+          
+        }
+             });
 </script>
 <script>
     $(document).ready(function() {

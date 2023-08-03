@@ -49,7 +49,7 @@
                         // Mendapatkan jumlah jam dan menit yang telah berlalu
                         $elapsedHours = floor($totalMinutes / 60) - 1;
                         $elapsedMinutes = $totalMinutes % 60;
-                        $total = $booking->studios->price + $booking->studios->denda * $elapsedHours;
+                        $total = $booking->studios->price * $booking->jml_org  * $hours + $booking->studios->denda * $elapsedHours;
                     @endphp
                     @if ($booking->status == 'Sukses')
                         <input type="hidden" name="grand_total" value="{{ $booking->grand_total }}">

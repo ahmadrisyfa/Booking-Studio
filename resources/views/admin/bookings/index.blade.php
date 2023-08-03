@@ -65,9 +65,6 @@
                             @endphp
                             <td>{{ $hour }} Jam</td> --}}
                                     <td>{{ number_format($booking->jml_org) }} Orang</td>
-                                    <td>Rp{{ number_format($booking->studios->price, 2, ',', '.') }}</td>
-                                    <td>
-
                                         @php
                                             $startDateTime = new DateTime($booking->time_from);
                                             $endDateTime = new DateTime($booking->time_to);
@@ -91,15 +88,14 @@
                                             $elapsedMinutes = $totalMinutes % 60;
                                             $total = $booking->studios->price + $booking->studios->denda * $elapsedHours;
                                         @endphp
-                                         @php
-                                            
-                                         @endphp
+                                    <td>Rp{{ number_format($booking->studios->price * $booking->jml_org * $hours, 2, ',', '.') }}</td>
+                                    <td>                                        
                                          {{-- Kode Blade untuk menampilkan jumlah jam --}}
                                          Durasi: {{ $hours }} Jam @if ($minutes > 0)
                                              {{ $minutes }} Menit
                                          @endif
                                          <br>
-                                        @if ($startDateTime->format('Y-m-d') == $currentDateTime->format('Y-m-d'))
+                                        {{-- @if ($startDateTime->format('Y-m-d') == $currentDateTime->format('Y-m-d')) --}}
                                             {{-- Kode Blade untuk menampilkan jam dan menit yang telah berlalu sejak waktu selesai --}}
                                             @if ($isElapsed && $elapsedHours > 0)
                                                 @if ($booking->status == 'Sukses')
@@ -120,7 +116,7 @@
                                                     </p>
                                                 @endif
                                             @endif
-                                        @endif
+                                        {{-- @endif --}}
                                     </td>
                                     @if ($isElapsed && $elapsedHours > 0)
                                         @if ($booking->status == 'Sukses')
@@ -128,11 +124,11 @@
                                         @elseif ($booking->status == 'Batal')
                                             <td>Rp{{ number_format($booking->grand_total, 2, ',', '.') }}</td>
                                         @else
-                                            <td>Rp{{ number_format($booking->studios->price + $booking->studios->denda * $elapsedHours, 2, ',', '.') }}
+                                            <td>Rp{{ number_format($booking->studios->price * $booking->jml_org  * $hours + $booking->studios->denda * $elapsedHours, 2, ',', '.') }}
                                             </td>
                                         @endif
                                     @else
-                                        <td>Rp{{ number_format($booking->studios->price, 2, ',', '.') }}</td>
+                                        <td>Rp{{ number_format($booking->studios->price * $booking->jml_org * $hours,  2, ',', '.') }}</td>
                                     @endif
                                     <td>{{ $booking->status }}</td>
 

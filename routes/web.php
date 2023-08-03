@@ -32,7 +32,7 @@ Route::get('booking/success/{booking}/{date}/{harga}', [\App\Http\Controllers\Bo
 Route::put('booking/uploadbukti/{id}', [\App\Http\Controllers\BookingController::class, 'uploadBukti'])->name('booking.uploadBukti');
 Route::get('bookingan-saya', [\App\Http\Controllers\BookingController::class, 'mine'])->name('booking.mine');
 
-Route::get('bookingpakets/create', [\App\Http\Controllers\BookingpaketsController::class, 'bookingpakets'])->name('bookingpakets');
+Route::get('bookingpakets/create', [\App\Http\Controllers\BookingpaketsController::class, 'bookingpakets'])->name('bookingpakets')->middleware('auth');
 Route::post('bookingpakets', [\App\Http\Controllers\BookingpaketsController::class, 'store'])->name('bookingpakets.store');
 Route::get('bookingpakets/success/{bookingpakets}/{date}/{harga}', [\App\Http\Controllers\BookingpaketsController::class, 'success'])->name('bookingpakets.success');
 Route::put('bookingpakets/uploadbukti/{id}', [\App\Http\Controllers\BookingpaketsController::class, 'uploadBukti'])->name('bookingpakets.uploadBukti');

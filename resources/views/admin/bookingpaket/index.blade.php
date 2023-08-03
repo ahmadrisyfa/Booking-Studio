@@ -7,98 +7,11 @@
 
 
         <!-- Content Row -->
+    
         <div class="card">
             <div class="card-header py-3 d-flex">
                 <h6 class="m-0 font-weight-bold text-primary">
                     {{ __('List Booking Paket') }}
-                </h6>
-                <div class="ml-auto">
-                    @can('booking_create')
-                        <a href="{{ route('admin.bookingpaket.create') }}" class="btn btn-primary">
-                            <span class="icon text-white-50">
-                                <i class="fa fa-plus"></i>
-                            </span>
-                            <span class="text">{{ __('Buat Booking Paket') }}</span>
-                        </a>
-                    @endcan
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered table-striped table-hover datatable datatable-bookingpaket"
-                        cellspacing="0" width="100%">
-                        <thead>
-                            <tr>
-                                <th width="10">
-
-                                </th>
-                                <th>No</th>
-                                <th>Kode</th>
-                                <th>Nama Penyewa</th>
-                                <th>Nama Service</th>
-                                <th>Jenis Paket</th>
-                                <th>Jam Mulai</th>
-                                <th>Jam Berakhir</th>
-                                <th>Total Harga</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($bookingpaket as $bookingpaket)
-                                <tr data-entry-id="{{ $bookingpaket->id }}">
-                                    <td>
-
-                                    </td>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $bookingpaket->kode }}</td>
-                                    <td>{{ $bookingpaket->user->name }}</td>
-                                    <td>{{ $bookingpaket->services->name }}</td>
-                                    <td><button class="btn btn-info">{{ $bookingpaket->services->jenis_paket }}</button>
-                                    </td>
-                                    <td>{{ Carbon\Carbon::parse($bookingpaket->time_from)->format('M, d D H:i:s') }}</td>
-                                    <td>{{ Carbon\Carbon::parse($bookingpaket->time_to)->format('M, d D H:i:s') }}</td>
-                                    @if ($bookingpaket->services->jenis_paket == 'Paket Perharga')
-                                        <td>Rp{{ number_format($bookingpaket->services->price + $bookingpaket->services->denda, 2, ',', '.') }}
-                                        </td>
-                                    @else
-                                        <td>Rp{{ number_format($bookingpaket->services->price * $bookingpaket->services->jam_paket + $bookingpaket->services->denda, 2, ',', '.') }}
-                                        </td>
-                                    @endif
-                                    <td>{{ $bookingpaket->status }}</td>
-                                    <td>
-                                        <div class="btn-group btn-group-sm">
-                                            <a href="{{ route('admin.bookingpaket.edit', $bookingpaket->id) }}"
-                                                class="btn btn-info">
-                                                <i class="fa fa-pencil-alt"></i>
-                                            </a>
-                                            <form onclick="return confirm('are you sure ? ')" class="d-inline"
-                                                action="{{ route('admin.bookingpaket.destroy', $bookingpaket->id) }}"
-                                                method="POST">
-                                                @csrf
-                                                @method('delete')
-                                                <button class="btn btn-danger"
-                                                    style="border-top-left-radius: 0;border-bottom-left-radius: 0;">
-                                                    <i class="fa fa-trash"></i>
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="9" class="text-center">{{ __('Data Empty') }}</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-header py-3 d-flex">
-                <h6 class="m-0 font-weight-bold text-primary">
-                    {{ __('List Booking Paket Hari Ini') }}
                 </h6>
                 <div class="ml-auto">
                     @can('booking_create')
@@ -135,7 +48,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($bphariini as $bookingpaket)
+                            @forelse($bookingpaket as $bookingpaket)
                                 <tr data-entry-id="{{ $bookingpaket->id }}">
                                     <td>
                                         @php
@@ -226,15 +139,8 @@
                                                 <td>Rp{{ number_format($bookingpaket->services->price * $hours + $bookingpaket->services->denda * $elapsedHours, 2, ',', '.') }}
                                                 </td>
                                             @endif
-                                        @else
-                                            @if ($bookingpaket->status == 'Sukses')
-                                                <td>Rp{{ number_format($bookingpaket->grand_total, 2, ',', '.') }}</td>
-                                                @elseif ($bookingpaket->status == 'Batal')
-                                                    <td>Rp{{ number_format($bookingpaket->grand_total, 2, ',', '.') }}</td>
-                                            @else
-                                                <td>Rp{{ number_format($bookingpaket->services->price * $hours + $bookingpaket->services->denda * $elapsedHours, 2, ',', '.') }}
-                                                </td>
-                                            @endif
+                                        @else                                         
+                                            <td>Rp{{ number_format($bookingpaket->grand_total, 2, ',', '.') }}</td>
                                         @endif
                                     @endif
                                     <td>{{ $bookingpaket->status }}</td>

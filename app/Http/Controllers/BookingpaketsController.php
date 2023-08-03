@@ -214,7 +214,9 @@ class BookingpaketsController extends Controller
             ->where(function ($query) use ($startTime, $endTime) {
                 $query->where(function ($query) use ($startTime, $endTime) {
                     $query->where('time_to', '>=', $startTime)
-                        ->where('time_from', '<=', $endTime);
+                        ->where('time_from', '<=', $endTime)
+                        ->whereDate('time_to', now());
+
                         // ->where('services_id', $id_services);
                 });
             })
@@ -243,17 +245,22 @@ class BookingpaketsController extends Controller
                     ]);
                 }
             }
+            if ($services->jenis_paket == "Paket Perharga") {
+                $total = $services->price;
+            } else {
+                $total = $services->price * $hours;
+            }
             $bookingpaket = Bookingpaket::create([
                 'kode' => self::nomat(),
                 'services_id' => $request->services_id,
                 'time_from' =>  $request->time_from,
                 'time_to' =>  $request->time_to,
                 'user_id' => auth()->id(),
-                'grand_total' => $services->price * $hours,
+                'grand_total' => $total,
                 'status' => !isset($request->status) ? 0 : $request->status
             ]);
-            $harga = $services->price * $hours;
-            return redirect()->route('bookingpakets.success', [$bookingpaket, $paymentDue, $harga])->with([
+            // $harga = $services->price * $hours;
+            return redirect()->route('bookingpakets.success', [$bookingpaket, $paymentDue, $total])->with([
                 'message' => 'Terimakasih sudah booking, Silahkan upload bukti pembayaran !',
                 'alert-type' => 'success',
             ]);
