@@ -39,8 +39,8 @@ class LaporanBokingController extends Controller
         $bookings = booking::where('status', 2)->where('time_from', '>=', $fromDate)
             ->where('time_to', '<=', $toDate)
             ->get();
-        $totalharga = booking::where('status', 2)->sum('grand_total');
-        $jumlah = booking::where('status', 2)->count();
+        $totalharga = $bookings->sum('grand_total');
+        $jumlah = $bookings->count();
 
         return view('admin.laporan.index', compact('bookings', 'totalharga', 'jumlah'));
     }

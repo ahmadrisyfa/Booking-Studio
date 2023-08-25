@@ -50,7 +50,9 @@
             : 0;
 
             // Mendapatkan jumlah jam dan menit yang telah berlalu
-            $elapsedHours = floor($totalMinutes / 60) -1;
+            // $elapsedHours = floor($totalMinutes / 60) -1;
+            $elapsedHours = floor($totalMinutes / 60) ;
+
             $elapsedMinutes = $totalMinutes % 60;
             @endphp
             @php

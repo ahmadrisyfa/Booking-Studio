@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
-
+use App\Models\User;
+use Illuminate\Http\Request;
 class LoginController extends Controller
 {
     /*
@@ -36,5 +37,14 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+    public function UpdateStatus(Request $request,$id)
+    {
+        $user = User::find($id);
+
+        $user->status = 'Aktif';
+        $user->save();
+
+        return redirect('login')->with('berhasil_registrasi', 'Akun Anda Telah Di AKtifkan, Silahkan Login !');
     }
 }

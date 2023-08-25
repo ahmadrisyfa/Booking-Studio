@@ -73,29 +73,36 @@
     <li class="nav-item">
         <a class="nav-link" href="#" data-toggle="collapse" data-target="#collapseLaporan" aria-expanded="true"
             aria-controls="collapseLaporan">
-            <span>{{ __('Laporan Booking Paket') }}</span>
+            <span>{{ __('Laporan') }}</span>
         </a>
         <div id="collapseLaporan" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <a class="collapse-item {{ request()->is('admin/laporan') || request()->is('admin/laporan/*') ? 'active' : '' }}"
-                    href="{{ route('admin.laporan.index') }}"> <i class="fa fa-briefcase mr-2"></i>
+                    href="{{ url('admin/laporan') }}"> <i class="fa fa-briefcase mr-2"></i>
                     {{ __('Laporan Paket') }}</a>
+
+                    <a class="collapse-item {{ request()->is('admin/laporan_boking') || request()->is('admin/laporan_boking/*') ? 'active' : '' }}"
+                        href="{{url('admin/laporan_booking') }}"> <i class="fa fa-briefcase mr-2"></i>
+                        {{ __('Laporan Boking Studio') }}</a>
+                        <a class="collapse-item {{ request()->is('admin/laporan_penyewa') || request()->is('admin/laporan_penyewa/*') ? 'active' : '' }}"
+                            href="{{url('admin/laporan_penyewa') }}"> <i class="fa fa-briefcase mr-2"></i>
+                            {{ __('Laporan Penyewa') }}</a>
             </div>
-        </div>
-    </li>
+        </div>       
+    </li>   
     <li class="nav-item">
-        <a class="nav-link" href="#" data-toggle="collapse" data-target="#collapseLaporanboking" aria-expanded="true"
-            aria-controls="collapseLaporanboking">
-            <span>{{ __('Laporan Booking ') }}</span>
+        <a class="nav-link" href="#" data-toggle="collapse" data-target="#notifikasi" aria-expanded="true"
+            aria-controls="notifikasi">
+            <span>{{ __('Notifikasi') }}</span>
         </a>
-        <div id="collapseLaporanboking" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+        <div id="notifikasi" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item {{ request()->is('admin/laporan_boking') || request()->is('admin/laporan_boking/*') ? 'active' : '' }}"
-                    href="{{ route('admin.laporan.booking') }}"> <i class="fa fa-briefcase mr-2"></i>
-                    {{ __('Laporan Boking') }}</a>
+                <a class="collapse-item {{ request()->is('admin/notifikasi') || request()->is('admin/notifikasi/*') ? 'active' : '' }}"
+                    href="{{ url('admin/notifikasi') }}"> <i class="fa fa-briefcase mr-2"></i>
+                    {{ __('Notifikasi') }}</a>                   
             </div>
-        </div>
-    </li>
+        </div>       
+    </li>   
 
 
 </ul>

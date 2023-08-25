@@ -141,6 +141,7 @@
       </div>
     </div>
   </div>
+  
   <!-- Bootstrap core JavaScript-->
   <script src="{{ asset('backend/vendor/jquery/jquery.min.js') }}"></script>
   <script src="{{ asset('backend/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
@@ -245,6 +246,23 @@
       $.fn.dataTable.ext.classes.sPageButton = '';
     });
   </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+  @if ($latestNotification = DB::table('notifications')->join('users', 'notifications.to_user', '=', 'users.id')->orderBy('notifications.created_at', 'desc')->select('notifications.*', 'users.name as username')->first())
+      <div style="max-width: 600px;">
+          <script>
+              toastr.options = {
+                  "progressBar": true,
+                  "closeButton": true,
+              }
+              toastr.success("{{ $latestNotification->username }} Telah {{ $latestNotification->text }}",
+                  'Notifikasi Terbaru!', {
+                      timeOut: 52000
+                  });
+          </script>
+      </div>
+  @endif
   @stack('script-alt')
   <!-- Page level custom scripts -->
   <!-- <script src="{{ asset('backend/js/demo/chart-area-demo.js') }}"></script>

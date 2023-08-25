@@ -9,10 +9,34 @@
         <!-- Content Row -->
     
         <div class="card">
+            <div class="row">
+                <div class="col-md-12 col-sm-12">
+                    <form action="{{url('admin/bookingpaket/search')}}" method="post">
+                        @csrf
+                        <div class="col-md-3 col-sm-3 ">
+                            Dari Tanggal <input id="fromDate" name="fromDate" value="{{ request('fromDate') }}"
+                                class="date-picker form-control" type="date" required>
+                        </div>
+                        <div class="col-md-3 col-sm-3 ">
+                            Sampai Tanggal
+                            <input id="toDate" name="toDate" value="{{ request('toDate') }}" class="date-picker form-control"
+                                type="date" required>
+                        </div>
+                        <div class="col-md-3" style="margin-top: 18px;">        
+                            <button class="btn btn-info" style="font-weight:bold" type="submit"><i class="fa fa-search"
+                                    style="margin-right:8px"></i>Cari</button>
+                                    {{-- <button type="button" class="btn btn-success" onclick="cetaktable()">Cetak</button> --}}
+                                    {{-- <button type="button" class="btn btn-info" onclick="download()">Download</button> --}}
+                        </div>
+                    </form>
+                </div>
+            </div>
+
             <div class="card-header py-3 d-flex">
                 <h6 class="m-0 font-weight-bold text-primary">
                     {{ __('List Booking Paket') }}
                 </h6>
+                
                 <div class="ml-auto">
                     @can('booking_create')
                         <a href="{{ route('admin.bookingpaket.create') }}" class="btn btn-primary">
@@ -23,6 +47,7 @@
                         </a>
                     @endcan
                 </div>
+                
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -43,12 +68,14 @@
                                 <th>Harga</th>
                                 <th>Denda</th>
                                 <th>Total</th>
+                                <th>Bukti Pembayaran</th>
+                                <th>Tanggal Di Pesan</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($bookingpaket as $bookingpaket)
+                            @forelse($bookingpaket as $key=>$bookingpaket)
                                 <tr data-entry-id="{{ $bookingpaket->id }}">
                                     <td>
                                         @php
@@ -143,6 +170,63 @@
                                             <td>Rp{{ number_format($bookingpaket->grand_total, 2, ',', '.') }}</td>
                                         @endif
                                     @endif
+                                    <td><button type="button" class="btn btn-primary" data-toggle="modal"
+                                        data-target="#exampleModalCenter{{ $key + 1 }}">
+                                        Lihat
+                                    </button>
+                                    <div class="modal fade" id="exampleModalCenter{{ $key + 1 }}" tabindex="-1"
+                                        role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalCenterTitle">Bukti Bayar
+                                                    </h5>
+                                                    <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    @isset($bookingpaket->bukti_bayar)
+                                                    <img class="w-100"
+                                                        src="{{ asset('storage/'.$bookingpaket->bukti_bayar) }}" alt="">
+                                                    <h5 style="text-align: center;margin:10px">Edit bukti Pembayaran</h5>
+                                                    <form
+                                                        action="{{ route('bookingpaketsadmin.uploadBukti', $bookingpaket->id) }}"
+                                                        method="post" enctype="multipart/form-data">
+                                                        @method('put')
+                                                        @csrf
+                                                        <div class="mb-3">
+                                                            <input type="file" class="form-control" name="bukti_bayar">
+                                                        </div>
+                                                        <button
+                                                            href=" https://api.whatsapp.com/send?phone=6281234567090&text=Nama,nomer lapangan berikut bukti pembayaran"
+                                                            class="btn btn-success btn-block">{{ __('Edit bukti Pembayaran') }}</button>
+                                                    </form>
+                                                    @else
+                                                    <p class="text-danger">
+                                                        Belum ada bukti baya, silahkan bayar lalu kirim buktinya
+                                                        disini
+                                                    </p>
+                                                    <form
+                                                        action="{{ route('bookingpakets.uploadBukti', $bookingpaket->id) }}"
+                                                        method="post" enctype="multipart/form-data">
+                                                        @method('put')
+                                                        @csrf
+                                                        <div class="mb-3">
+                                                            <input type="file" class="form-control" name="bukti_bayar">
+                                                        </div>
+                                                        <button
+                                                            href=" https://api.whatsapp.com/send?phone=6281234567090&text=Nama,nomer lapangan berikut bukti pembayaran"
+                                                            class="btn btn-success btn-block">{{ __('Kirim bukti perbayaran') }}</button>
+                                                    </form>
+                                                    @endisset
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                    <td>{{$bookingpaket->created_at}}</td>
                                     <td>{{ $bookingpaket->status }}</td>
                                     @php
                                         $total = $bookingpaket->services->price + $bookingpaket->services->denda * $elapsedHours;
@@ -163,12 +247,18 @@
                                                     <i class="fa fa-trash"></i>
                                                 </button>
                                             </form>
+                                            <a href="{{ url('admin/bookingpaket/nota_pemesanan/'.$bookingpaket->id) }}" target="_blank"
+                                                class="btn btn-warning">
+                                                {{-- Nota Pemesanan --}}
+                                                <i class="fa fa-print"></i>
+    
+                                            </a>
                                         </div>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="9" class="text-center">{{ __('Data Empty') }}</td>
+                                    <td colspan="14" class="text-center">{{ __('Data Empty') }}</td>
                                 </tr>
                             @endforelse
                         </tbody>

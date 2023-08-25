@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Role;
+use Illuminate\Http\Request;
+
 use App\Models\User;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Request;
+// use Illuminate\Support\Facades\Request;
 use App\Http\Requests\Admin\StoreUserRequest;
 use App\Http\Requests\Admin\UpdateUserRequest;
-
 class UserController extends Controller
 {
     /**

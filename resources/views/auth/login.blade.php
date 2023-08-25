@@ -8,6 +8,12 @@
                 <div class="card-header">{{ __('Login') }}</div>
 
                 <div class="card-body">
+                        @if(session()->has('berhasil_registrasi'))
+                            <div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
+                                <i class="bi bi-check-circle me-1"></i>
+                                        {{ session('berhasil_registrasi') }}
+                            </div>
+                        @endif 
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
 
@@ -57,11 +63,11 @@
                                     {{ __('Login') }}
                                 </button>
 
-                                @if (Route::has('password.request'))
+                                {{-- @if (Route::has('password.request'))
                                     <a class="btn btn-link" href="{{ route('password.request') }}">
                                         {{ __('Forgot Your Password?') }}
                                     </a>
-                                @endif
+                                @endif --}}
                             </div>
                         </div>
                     </form>

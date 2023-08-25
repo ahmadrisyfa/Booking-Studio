@@ -19,13 +19,13 @@ class CreateservicesTable extends Migration
             $table->integer('price');
             $table->string('jenis_paket');
             $table->string('jam_paket')->nullable();
+            $table->text('deskripsi');
             $table->json('image')->nullable();
             $table->string('denda')->nullable();
             $table->tinyInteger('status')->default(0);
             $table->timestamps();
         });
     }
-
     /**
      * Reverse the migrations.
      *

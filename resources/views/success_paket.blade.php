@@ -415,10 +415,10 @@
     </nav>
     <div class="container my-5">
 
-        @if (session()->has('message'))
+        @if (session()->has('success'))
         <div class="alert alert-{{ session()->get('alert-type') }} alert-dismissible fade show" role="alert"
             id="alert-message">
-            {{ session()->get('message') }}
+            {{ session()->get('success') }}
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>

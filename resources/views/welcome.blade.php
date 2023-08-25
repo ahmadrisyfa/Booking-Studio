@@ -70,6 +70,27 @@
                 </div>
             </div>
         </div>
+        <h4 class="text-center mt-4">PERATURAN PENYEWAAN STUDIO MUSIK</h4>
+        <p class="text-center mt-2" style="color: black">
+            <ol class="text-center text-success">
+                <li>
+                    Jika waktu penyewaan sudah habis, tetapi penyewa masih bermain musikdidalam studio selama 15 menit, maka dihitung menyewa selama 1 jam.
+                </li>
+                <li>
+                    Tidak boleh membawa makanan & minuman kedalam studio musik
+                </li>
+                <li>
+                    Tidak boleh merokok didalam studio musik
+                </li>
+                <li>
+                    Jika ada kerusakan alat yang disebabkan oleh penyewa, maka penyewaharus membayar denda sesuai dengan kerusakan yang terjad
+                </li>
+            </ol>
+        </p>
+        <hr>
+        <h4 class="text-center">Jam Operasional</h4>
+        <p class="text-center text-success">Pukul: 08.00 - 20.00</p>
+        <hr>
     </div>
 </div>
 {{-- <section class="services-area" id="services">
@@ -111,11 +132,11 @@
                 <h3 class="fw-bold">Daftar Studio</h3>
             </div>
             @foreach ($studios as $studios)
-            <div class="modal fade" id="staticBackdrop{{$studios->id}}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel{{$studios->id}}" aria-hidden="true">
+            <div class="modal fade" id="gambarstudios{{$studios->id}}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="gambarstudiosLabel{{$studios->id}}" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
                   <div class="modal-content">
                     <div class="modal-header">
-                      <h5 class="modal-title" id="staticBackdropLabel{{$studios->id}}">Image Studio</h5>
+                      <h5 class="modal-title" id="gambarstudiosLabel{{$studios->id}}">Image Studio</h5>
                       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                       </button>
@@ -150,7 +171,7 @@
             </div>
             <div class="col-lg-4 mb-5">
                 <div class="card" style="width: 18rem;">
-                    <span data-toggle="modal" data-target="#staticBackdrop{{$studios->id}}">
+                    <span data-toggle="modal" data-target="#gambarstudios{{$studios->id}}">
                         @if ($studios->image)
                         @php
                             $imagePaths = json_decode($studios->image);
@@ -164,7 +185,7 @@
                         <p class="card-text">Harga : Rp{{ number_format($studios->price, 2, ',', '.') }} / Jam
                         </p>
                         <p class="card-text"> Rp{{ number_format($studios->org, 2, ',', '.') }} / Orang</p>
-                        <a href="{{ route('booking', ['studio' => $studios->names]) }}"
+                        <a href="{{url('booking/create/'.$studios->id)}}"
                             class="btn btn-primary">Booking</a>
                     </div>
                 </div>
@@ -175,11 +196,11 @@
             </div>
             {{-- <div class="collumn"> --}}
                 @foreach ($services as $services)
-                <div class="modal fade" id="staticBackdrop{{$services->id}}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel{{$services->id}}" aria-hidden="true">
+                <div class="modal fade" id="gambarservices{{$services->id}}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="gambarservicesLabel{{$services->id}}" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <h5 class="modal-title" id="staticBackdropLabel{{$services->id}}">Image Service</h5>
+                          <h5 class="modal-title" id="gambarservicesLabel{{$services->id}}">Image Service</h5>
                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                           </button>
@@ -214,7 +235,7 @@
                 </div>
                 <div class="col-lg-4 mb-5">
                     <div class="card" style="width: 18rem;">
-                        <span data-toggle="modal" data-target="#staticBackdrop{{$services->id}}">
+                        <span data-toggle="modal" data-target="#gambarservices{{$services->id}}">
                             @if ($services->image)
                             @php
                                 $imagePaths = json_decode($services->image);
@@ -233,7 +254,7 @@
                             </p>
                             <p class="card-text">Harga : Rp{{ number_format($services->price, 2, ',', '.') }}
                             </p>
-                            <a href="{{ route('bookingpakets', ['services' => $services->names]) }}"
+                            <a href="{{url('bookingpakets/create/'.$services->id)}}"
                                 class="btn btn-primary">Booking</a>
                         </div>
                     </div>

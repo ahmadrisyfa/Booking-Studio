@@ -53,8 +53,12 @@
                 </div>
                 <div class="form-group">
                     <label for="name">{{ __('Denda') }}</label>
-                    <input type="text" class="form-control" id="denda" placeholder="{{ __('denda') }}" name="denda"
+                    <input type="number" class="form-control" id="denda" placeholder="{{ __('denda') }}" name="denda"
                         value="{{ old('denda') }}" />
+                </div>
+                <div class="form-group">
+                    <label for="price">{{ __('Deskripsi') }}</label>
+                    <textarea class="form-control" id="deskripsi" placeholder="{{ __('deskripsi') }}" name="deskripsi" value="" style="height: 200px" >{{ old('deskripsi') }}</textarea>
                 </div>
                 <div class="form-group {{ $errors->has('photo') ? 'has-error' : '' }}">
                     <label for="photo">Photo</label>                  

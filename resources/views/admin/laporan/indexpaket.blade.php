@@ -33,12 +33,12 @@
                         <option value="Paket Perharga" {{ request('jenis_paket') == 'Paket Perharga' ? 'selected' : '' }}>Paket Perharga</option>
                     </select>
                 </div>
-                <div class="col-md-3" style="margin-top: 18px;">        
+                <div class="col-md-12" style="margin-top: 18px;">        
                     <button class="btn btn-info" style="font-weight:bold" type="submit"><i class="fa fa-search"
                             style="margin-right:8px"></i>Cari</button>
                             <button type="button" class="btn btn-success" onclick="cetaktable()">Cetak</button>
                             <button type="button" class="btn btn-info" onclick="download()">Download</button>
-
+                            <button type="button" class="btn btn-warning" onclick="downloadAsPdf()">Download Pdf</button>    
                 </div>
             </form>
         </div>
@@ -93,18 +93,39 @@
 @endsection
 
 @push('script-alt')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<script>
+    function downloadAsPdf() {
+        const table = document.getElementById('example1');
+
+        // Set options for html2pdf
+        const options = {
+            margin: 1,
+            filename: 'filtered_data.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        // Create a new html2pdf instance
+        html2pdf().from(table).set(options).save();
+    }
+</script>
+
 <script>
     function cetaktable() {
         const table = document.getElementById('example1'); 
         const newWindow = window.open('', '_blank');
         const style = `
-            <style>
-                table { border-collapse: collapse; width: 100%; }
-                th, td { border: 1px solid black; padding: 8px; }
-                th { background-color: #f2f2f2; }
+    <style>
+        body { margin: 60px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid black; padding: 8px; }
+        th { background-color: #f2f2f2; }
+    </style>
+`;
 
-            </style>
-        `;
         const users = "<p>Nama Penyetak: {{auth()->user()->name}}</p>";
         const jenislaporan = "Jenis Laporan: Laporan Booking Paket Saya";
         

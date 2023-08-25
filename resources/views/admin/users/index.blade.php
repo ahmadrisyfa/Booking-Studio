@@ -32,6 +32,7 @@
                                 <th>{{ __('Name') }}</th>
                                 <th>{{ __('Email') }}</th>
                                 <th>{{ __('Roles') }}</th>
+                                <th>{{ __('Status') }}</th>
                                 <th>{{ __('Action') }}</th>
                             </tr>
                         </thead>
@@ -44,8 +45,11 @@
                                 <td>{{ $user->email }}</td>
                                 <td>
                                     @foreach($user->roles as $key => $role)
-                                        <span class="badge badge-info">{{ $role->title }}</span>
+                                        <span class="btn btn-info btn-sm">{{ $role->title }}</span>
                                     @endforeach
+                                </td>
+                                <td>
+                                    <span class="btn btn-success btn-sm">{{$user->status}}</span>
                                 </td>
                                 <td>
                                     <div class="btn-group btn-group-sm">

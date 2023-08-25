@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
-
+use App\Models\Notifikasi;
 class BookingController extends Controller
 {
     /**
@@ -68,7 +68,6 @@ class BookingController extends Controller
      */
     public function store(Request $request)
     {
-        abort_if(Gate::denies('booking_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
         $studios = Studios::findOrFail($request->studios_id);
         // $studios->command('Y-m-d H:i:s')->withoutOverlapping();
         // dd($startTime);
@@ -76,21 +75,41 @@ class BookingController extends Controller
         $endTime = $request->time_to;
 
         $bookingExists = DB::table('bookings')
-            ->where(function ($query) use ($startTime, $endTime) {
-                $query->where(function ($query) use ($startTime, $endTime) {
-                    $query->where('time_to', '>=', $startTime)
-                        ->where('time_from', '<=', $endTime);
-                });
-            })
-            ->exists();
-        if ($bookingExists) {
-            // Ada booking lain pada waktu yang sama
-            return redirect()->route('admin.bookings.index')->with([
-                'message' => 'Maaf, waktu tersebut sudah dipesan oleh orang lain.',
-                'alert-type' => 'danger'
-            ]);
-        } else {
-            Booking::create([
+        ->where(function ($query) use ($startTime, $endTime) {
+            $query->where(function ($query) use ($startTime, $endTime) {
+                $query->where('time_to', '>=', $startTime)
+                    ->where('time_from', '<=', $endTime);
+                    // ->whereDate('time_to', now());
+            });
+        })
+        ->exists();
+        // $services_id = $request->services_id;
+    $bookingPaketsExists = DB::table('bookingpakets')
+    ->where(function ($query) use ($startTime, $endTime) {
+        $query->where(function ($query) use ($startTime, $endTime) {
+            $query->where('time_to', '>=', $startTime)
+                ->where('time_from', '<=', $endTime);
+                // ->whereDate('time_to', now());
+        });
+    })
+    ->exists();
+    $EventExists = DB::table('event')
+    ->where(function ($query) use ($startTime, $endTime) {
+        $query->where(function ($query) use ($startTime, $endTime) {
+            $query->where('time_to', '>=', $startTime)
+                ->where('time_from', '<=', $endTime);
+                // ->whereDate('time_to', now());
+        });
+    })
+    ->exists();
+    if ($bookingExists || $bookingPaketsExists || $EventExists) {
+        // Ada booking lain pada waktu yang sama
+        return redirect()->back()->with([
+            'message' => 'Maaf, waktu tersebut sudah dipesan oleh orang lain.',
+            'alert-type' => 'danger'
+        ]);
+    } else {
+           $booking = Booking::create([
                 'kode' => self::nomat(Auth()->user()->name),
                 'user_id' => auth()->id(),
                 'jml_org' => $request->jml_org,
@@ -99,6 +118,13 @@ class BookingController extends Controller
                 'time_from' => $request->time_from,
                 'grand_total' => $studios->price,
                 'status' => !isset($request->status) ? 0 : $request->status
+            ]);
+            $notifikasiText = 'Menambahkan Data Booking Studio dengan kode: ' . $booking->kode;
+
+            $notifikasi = Notifikasi::create([
+                'user_id' => auth()->id(),
+                'to_user' => $booking->user_id,
+                'text' => $notifikasiText
             ]);
             return redirect()->route('admin.bookings.index')->with([
                 'message' => 'successfully created !',
@@ -152,11 +178,32 @@ class BookingController extends Controller
         abort_if(Gate::denies('booking_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
         $studios = Studios::findOrFail($request->studios_id);
 
-        $booking->update($request->validated() + [
+            $statusCodes = [
+            0 => 'Menunggu konfirmasi',
+            1 => 'Booked',
+            2 => 'Sukses',
+            3 => 'Batal'
+        ];
+
+        $validatedData = $request->validated();
+
+        $booking->update(array_merge($validatedData, [
             'grand_total' => $request->grand_total,
             'jml_org' => $request->jml_org,
-            'status' => !isset($request->status) ? 0 : $request->status
+            'status' => isset($request->status) ? $request->status : 0
+        ]));
+
+        $status = $statusCodes[$request->status] ?? $statusCodes[0]; // Mengambil teks status berdasarkan kode status
+
+        $kode = $booking->kode;
+
+        $notifikasi = Notifikasi::create([
+            'user_id' => auth()->id(),
+            'to_user' => $booking->user_id,
+            'text' => 'Mengedit Data Booking Studio - Kode: ' . $kode . ' Dengan - Status: ' . $status
         ]);
+
+        
 
         return redirect()->route('admin.bookings.index')->with([
             'message' => 'successfully updated !',
@@ -174,7 +221,14 @@ class BookingController extends Controller
     {
         abort_if(Gate::denies('booking_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
         $booking->delete();
+        $kode = $booking->kode;
+        $notifikasiText = 'Menghapus Data Booking Studio - Kode: ' . $kode;
 
+        $notifikasi = Notifikasi::create([
+            'user_id' => auth()->id(),
+            'to_user' => $booking->user_id,
+            'text' => $notifikasiText
+        ]);
         return redirect()->route('admin.bookings.index')->with([
             'message' => 'successfully deleted !',
             'alert-type' => 'success'
@@ -192,5 +246,25 @@ class BookingController extends Controller
         Booking::whereIn('id', request('ids'))->delete();
 
         return response()->noContent();
+    }
+    public function laporanSearch(Request $request)
+    {
+        $title = Auth()->user()->name;
+        $fromDate = $request->input('fromDate');
+        $toDate = $request->input('toDate');
+
+        $bookings = Booking::where('time_from', '>=', $fromDate)
+            ->where('time_to', '<=', $toDate)
+            ->get();
+        // $totalharga = booking::where('status', 2)->sum('grand_total');
+        // $jumlah = booking::where('status', 2)->count();
+
+        return view('admin.bookings.index', compact('bookings'));
+    }
+    public function NotaPemesanan($id)
+    {
+        $bookings = Booking::find($id);
+        return view('admin.bookings.nota-pemesanan', compact('bookings'));
+
     }
 }

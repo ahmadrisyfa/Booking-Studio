@@ -30,19 +30,17 @@ trait RegistersUsers
     public function register(Request $request)
     {
         $this->validator($request->all())->validate();
-
+    
         event(new Registered($user = $this->create($request->all())));
-
-        $this->guard()->login($user);
-
+    
         if ($response = $this->registered($request, $user)) {
             return $response;
         }
+    
+        return redirect('/login')->with('berhasil_registrasi', 'Registrasi Berhasil! Silahkan Cek Gmail, Untuk Mengaktifkan Akun Anda');
 
-        return $request->wantsJson()
-                    ? new JsonResponse([], 201)
-                    : redirect($this->redirectPath());
     }
+    
 
     /**
      * Get the guard to be used during registration.

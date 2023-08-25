@@ -27,7 +27,8 @@ class StudiosRequest extends FormRequest
             'names' => 'required|string',
             'price' => 'required|numeric',
             'org' => 'required|numeric',
-            'status' => 'required'
+            'status' => 'required',
+            'deskripsi' => 'required'
         ];
     }
 }

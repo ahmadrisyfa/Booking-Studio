@@ -19,12 +19,12 @@ class CreateStudiosTable extends Migration
             $table->integer('price');
             $table->integer('org');
             $table->string('denda');
+            $table->text('deskripsi');
             $table->json('image')->nullable();
             $table->tinyInteger('status')->default(0);
             $table->timestamps();
         });
     }
-
     /**
      * Reverse the migrations.
      *

@@ -65,6 +65,8 @@ class ServicesController extends Controller
         'image' => json_encode($imagePaths),
         'denda' => $request->input('denda'),
         'status' => $request->input('status', 0),
+        'deskripsi' => nl2br($request->input('deskripsi')),
+
     ]);
       
 
@@ -135,6 +137,7 @@ class ServicesController extends Controller
         $service->jam_paket = $request->input('jam_paket');
         $service->denda = $request->input('denda');
         $service->status = $request->input('status', 0);
+        $service->deskripsi = nl2br($request->input('deskripsi'));
 
         $service->save();
 

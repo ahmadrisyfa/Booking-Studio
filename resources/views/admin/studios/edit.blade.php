@@ -44,6 +44,10 @@
                         <label for="price">{{ __('Denda') }}</label>
                         <input type="number" class="form-control" id="denda" placeholder="{{ __('denda') }}" name="denda" value="{{ old('denda', $studio->denda) }}" />
                     </div>
+                    <div class="form-group">
+                        <label for="price">{{ __('Deskripsi') }}</label>
+                        <textarea class="form-control" id="deskripsi" placeholder="{{ __('deskripsi') }}" name="deskripsi" value="" style="height: 200px" >{{ old('deskripsi', $studio->deskripsi) }}</textarea>
+                    </div>
                     <div class="form-group {{ $errors->has('photo') ? 'has-error' : '' }}">
                         @if(json_decode($studio->image))
                         <div>

@@ -77,7 +77,7 @@
             format: 'YYYY-MM-DD HH:mm',
             enabledHours: [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
             minDate: moment().hour(9).startOf('hour'),
-            maxDate: moment().hour(22).startOf('hour').add(9999999999999, 'day'),
+            maxDate: moment().add(2, 'months').hour(22).startOf('hour'),
             locale: 'en',
             sideBySide: true,
             icons: {

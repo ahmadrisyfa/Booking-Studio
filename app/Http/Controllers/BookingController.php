@@ -13,6 +13,8 @@ use App\Http\Requests\Admin\BookingRequest;
 use DateTime;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use App\Models\Notifikasi;
+use Illuminate\Support\Facades\DB;
 
 class BookingController extends Controller
 {
@@ -102,7 +104,7 @@ class BookingController extends Controller
         return view('welcome', compact('studios',  'services'));
     }
 
-    public function booking(Request $request)
+    public function booking(Request $request,$id)
     {
 
         $bookingspakets = [];
@@ -189,51 +191,145 @@ class BookingController extends Controller
         $studiosString = $request->get('names');
         $services = Services::where('status', 1)->get();
         $servicesString = $request->get('name');
-
-        return view('booking', compact('studios', 'studiosString', 'services', 'servicesString', 'bookings', 'bookingspakets', 'events1'));
+        $data = Studios::find($id);
+        return view('booking', compact('data','studios', 'studiosString', 'services', 'servicesString', 'bookings', 'bookingspakets', 'events1'));
     }
 
-    public function store(BookingRequest $request)
+    public function store(Request $request)
     {
         $studios = Studios::findOrFail($request->studios_id);
-
-
         $orderDate = date('Y-m-d H:i:s');
         $paymentDue = (new \DateTime($orderDate))->modify('+10 minute')->format('Y-m-d H:i:s');
+        // $studios->command('Y-m-d H:i:s')->withoutOverlapping();
+        // dd($startTime);
         $startTime = $request->time_from; // Jam mulai booking dalam format datetime
-        $endTime = $request->time_to; // Jam selesai booking dalam format datetime
+        $endTime = $request->time_to;
+
+        $bookingExists = DB::table('bookings')
+        ->where(function ($query) use ($startTime, $endTime) {
+            $query->where(function ($query) use ($startTime, $endTime) {
+                $query->where('time_to', '>=', $startTime)
+                    ->where('time_from', '<=', $endTime);
+                    // ->whereDate('time_to', now());
+            });
+        })
+        ->exists();
+        // $services_id = $request->services_id;
+        $bookingPaketsExists = DB::table('bookingpakets')
+        ->where(function ($query) use ($startTime, $endTime) {
+        $query->where(function ($query) use ($startTime, $endTime) {
+            $query->where('time_to', '>=', $startTime)
+                ->where('time_from', '<=', $endTime);
+                // ->whereDate('time_to', now());
+        });
+        })
+        ->exists();
+        $EventExists = DB::table('event')
+        ->where(function ($query) use ($startTime, $endTime) {
+        $query->where(function ($query) use ($startTime, $endTime) {
+            $query->where('time_to', '>=', $startTime)
+                ->where('time_from', '<=', $endTime);
+                // ->whereDate('time_to', now());
+        });
+        })
+        ->exists();
+        if ($bookingExists || $bookingPaketsExists || $EventExists) {
+        // Ada booking lain pada waktu yang sama
+        return redirect()->back()->with([
+            'message' => 'Maaf, waktu tersebut sudah dipesan oleh orang lain.',
+            'alert-type' => 'danger'
+        ]);
+        } else {
 
         $startDateTime = new DateTime($startTime);
         $endDateTime = new DateTime($endTime);
 
         $interval = $startDateTime->diff($endDateTime);
         $hours = $interval->h;
-        $harga = $studios->price * $hours;
-        $booking = Booking::create($request->validated() + [
+        $jml_org = $request->jml_org;
+        $harga = $studios->price * $jml_org * $hours;
+        $booking = Booking::create([
             'kode' => self::nomat(Auth()->user()->name),
             'user_id' => auth()->id(),
+            'jml_org' => $request->jml_org,
+            'studios_id' => $request->studios_id,
+            'time_to' => $request->time_to,
+            'time_from' => $request->time_from,
             'grand_total' => $harga,
             'status' => !isset($request->status) ? 0 : $request->status
         ]);
+        $notifikasiText = 'Menambahkan Data Booking Studio dengan kode: ' . $booking->kode;
 
-        return redirect()->route('booking.success', [$booking, $paymentDue, $harga])->with([
-            'message' => 'Terimakasih sudah booking, Silahkan upload bukti pembayaran !',
-            'alert-type' => 'success'
+        $notifikasi = Notifikasi::create([
+            'user_id' => auth()->id(),
+            'to_user' => $booking->user_id,
+            'text' => $notifikasiText
         ]);
+        return redirect()->back();
+        }
     }
 
     public function edit(Request $request, $id)
-    {
-        $daftar = [
-            'time_from' => 'required',
-            'time_to' => 'required'
-        ];
-        $validasi = $request->validate($daftar);
+    {        
+        $studios = Studios::findOrFail($request->studios_id);
+        $orderDate = date('Y-m-d H:i:s');
+        $paymentDue = (new \DateTime($orderDate))->modify('+10 minute')->format('Y-m-d H:i:s');
+        $startTime = $request->time_from; 
+        $endTime = $request->time_to;
 
-        Booking::where('id', $id)
-            ->update($validasi);
-        return redirect(route('booking.mine'));
+        $bookingExists = DB::table('bookings')
+        ->where(function ($query) use ($startTime, $endTime) {
+            $query->where(function ($query) use ($startTime, $endTime) {
+                $query->where('time_to', '>=', $startTime)
+                    ->where('time_from', '<=', $endTime);
+            });
+        })
+        ->exists();
+        $bookingPaketsExists = DB::table('bookingpakets')
+        ->where(function ($query) use ($startTime, $endTime) {
+        $query->where(function ($query) use ($startTime, $endTime) {
+            $query->where('time_to', '>=', $startTime)
+                ->where('time_from', '<=', $endTime);
+        });
+        })
+        ->exists();
+        $EventExists = DB::table('event')
+        ->where(function ($query) use ($startTime, $endTime) {
+        $query->where(function ($query) use ($startTime, $endTime) {
+            $query->where('time_to', '>=', $startTime)
+                ->where('time_from', '<=', $endTime);
+        });
+        })
+        ->exists();
+        if ($bookingExists || $bookingPaketsExists || $EventExists) {
+        return redirect()->back()->with([
+            'message' => 'Maaf, waktu tersebut sudah dipesan oleh orang lain.',
+            'alert-type' => 'danger'
+        ]);
+        } else {
+            $startDateTime = new DateTime($startTime);
+            $endDateTime = new DateTime($endTime);
+            $interval = $startDateTime->diff($endDateTime);
+            $hours = $interval->h;
+            $jml_org = $request->jml_org;
+            $harga = $studios->price * $jml_org * $hours;
+            $booking = Booking::find($id);
+
+            $booking->update([
+                'user_id' => auth()->id(),
+                'time_to' => $request->time_to,
+                'time_from' => $request->time_from,
+            ]);
+            $notifikasiText = 'Menggedit Data Booking Jam Studio dengan kode: ' . $booking->kode;    
+            $notifikasi = Notifikasi::create([
+                'user_id' => auth()->id(),
+                'to_user' => $booking->user_id,
+                'text' => $notifikasiText
+            ]);
+            return redirect('bookingan-saya');
+        }
     }
+    
 
     public function updateStatus(Request $request, $id)
     {
@@ -255,10 +351,52 @@ class BookingController extends Controller
         $request->validate([
             'bukti_bayar' => 'required',
         ]);
+        
         $booking = Booking::find($id);
+        $kode = $booking->kode; 
+        
+        if ($booking->bukti_bayar) {
+            $notifikasiText = 'Mengedit Foto Pembayaran Booking Studio - Dengan Kode: ' . $kode;
+        } else {
+            $notifikasiText = 'Menambahkan Foto Pembayaran Booking Studio - Dengan Kode: ' . $kode;
+        }
+        
         $data['bukti_bayar'] = $request->file('bukti_bayar')->store('bukti_bayar', 'public');
         $booking->update($data);
-        return redirect(route('booking.index'));
+        
+        $notifikasi = Notifikasi::create([
+            'user_id' => auth()->id(),
+            'to_user' => $booking->user_id,
+            'text' => $notifikasiText
+        ]);
+        
+        return redirect('bookingan-saya')->with('success', 'Data Berhasil Di Tambahkan.');
+    }
+    function uploadBuktiadmin(Request $request, $id)
+    {
+        $request->validate([
+            'bukti_bayar' => 'required',
+        ]);
+        
+        $booking = Booking::find($id);
+        $kode = $booking->kode; 
+        
+        if ($booking->bukti_bayar) {
+            $notifikasiText = 'Mengedit Foto Pembayaran Booking Studio - Dengan Kode: ' . $kode;
+        } else {
+            $notifikasiText = 'Menambahkan Foto Pembayaran Booking Studio - Dengan Kode: ' . $kode;
+        }
+        
+        $data['bukti_bayar'] = $request->file('bukti_bayar')->store('bukti_bayar', 'public');
+        $booking->update($data);
+        
+        $notifikasi = Notifikasi::create([
+            'user_id' => auth()->id(),
+            'to_user' => $booking->user_id,
+            'text' => $notifikasiText
+        ]);
+        
+        return redirect()->back()->with('success', 'Data Berhasil Di Tambahkan.');
     }
 
     public function mine()
@@ -266,4 +404,10 @@ class BookingController extends Controller
         $bookings = Booking::where('user_id', auth()->user()->id)->get();
         return view('bokingan-saya', compact('bookings'));
     }
+    public function NotaPemesanan($id)
+    {
+        $bookings = Booking::find($id);
+        return view('nota_pemesanan_bokingan_saya',compact('bookings'));
+    }
+  
 }
