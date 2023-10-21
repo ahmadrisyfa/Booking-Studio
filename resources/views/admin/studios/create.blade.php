@@ -44,6 +44,10 @@
                         <input type="number" class="form-control" id="denda" placeholder="{{ __('denda') }}" name="denda" value="{{ old('denda') }}" />
                     </div>
                     <div class="form-group">
+                        <label for="price">{{ __('Deskripsi') }}</label>
+                        <textarea class="form-control" id="deskripsi" placeholder="{{ __('deskripsi') }}" name="deskripsi" value="" style="height: 200px" >{{ old('deskripsi') }}</textarea>
+                    </div>
+                    <div class="form-group">
                         <label for="photo">Photo</label>
                         <input type="file" class="form-control" id="image" placeholder="{{ __('image') }}" name="image[]" multiple />
 

@@ -51,7 +51,7 @@
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" href="{{ route('booking.mine') }}">Bokingan Saya</a>
                                 <a class="dropdown-item" href="{{ route('booking-paket.mine') }}">Bokingan Paket Saya</a>
-
+                                <a class="dropdown-item" href="{{ url('notifikasi') }}">Notifikasi</a>
                                 <a class="dropdown-item"
                                     onclick="event.preventDefault();document.getElementById('logout-form').submit();"
                                     href="">Logout</a>
@@ -70,6 +70,28 @@
     <footer>
         <p align="center">Created by Ilham Alamsyah</a></p>
     </footer>
+    <!-- Pastikan untuk memuat jQuery sebelum memuat Toastr.js -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Kemudian baru memuat Toastr.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    @if ($latestNotification = DB::table('notifications')->where('to_user', auth()->id())->join('users', 'notifications.to_user', '=', 'users.id')->orderBy('notifications.created_at', 'desc')->select('notifications.*', 'users.name as username')->first())
+        <div style="max-width: 600px;">
+            <script>
+                toastr.options = {
+                    "progressBar": true,
+                    "closeButton": true,
+                }
+                toastr.success("{{ $latestNotification->username }} Telah {{ $latestNotification->text }}",
+                    'Notifikasi Terbaru!', {
+                        timeOut: 52000
+                    });
+            </script>
+        </div>
+    @endif
+
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
         integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous">
     </script>

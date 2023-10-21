@@ -47,7 +47,9 @@
                         $totalMinutes = $isElapsed ? $diff->days * 24 * 60 + $diff->h * 60 + $diff->i : 0;
                         
                         // Mendapatkan jumlah jam dan menit yang telah berlalu
-                        $elapsedHours = floor($totalMinutes / 60) - 1;
+                        // $elapsedHours = floor($totalMinutes / 60) - 1;
+                        $elapsedHours = floor($totalMinutes / 60) ;
+
                         $elapsedMinutes = $totalMinutes % 60;
                         $total = $booking->studios->price * $booking->jml_org  * $hours + $booking->studios->denda * $elapsedHours;
                     @endphp

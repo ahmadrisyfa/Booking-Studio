@@ -14,7 +14,7 @@ use DateTime;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-
+use App\Models\Notifikasi;
 class BookingpaketsController extends Controller
 {
 
@@ -101,7 +101,7 @@ class BookingpaketsController extends Controller
         return view('welcome', compact('bookingpaket', 'services'));
     }
 
-    public function bookingpakets(Request $request)
+    public function bookingpakets(Request $request,$id)
     {
 
 
@@ -189,8 +189,8 @@ class BookingpaketsController extends Controller
         $studiosString = $request->get('name');
         $services = Services::where('status', 1)->get();
         $servicesString = $request->get('name');
-
-        return view('bookingpakets', compact('studios', 'studiosString', 'services', 'servicesString', 'bookingspakets', 'bookings', 'events1'));
+        $data = Services::find($id);
+        return view('bookingpakets', compact('data','studios', 'studiosString', 'services', 'servicesString', 'bookingspakets', 'bookings', 'events1'));
 
         // $services = Services::where('status', 1)->get();
         // $servicesString = $request->get('name');
@@ -210,23 +210,40 @@ class BookingpaketsController extends Controller
         $endTime = $request->time_to;
         // $id_services = $request->services_id;
         // dd($id_services);
-        $bookingExists = DB::table('bookingpakets')
-            ->where(function ($query) use ($startTime, $endTime) {
-                $query->where(function ($query) use ($startTime, $endTime) {
-                    $query->where('time_to', '>=', $startTime)
-                        ->where('time_from', '<=', $endTime)
-                        ->whereDate('time_to', now());
-
-                        // ->where('services_id', $id_services);
-                });
-            })
-            ->exists();
-        if ($bookingExists) {
-            // Ada booking lain pada waktu yang sama
-            return redirect()->back()->with([
-                'message' => 'Maaf, jam tersebut sudah dibooking orang lain',
-                'alert-type' => 'danger'
-            ]);
+        $bookingExists = DB::table('bookings')
+        ->where(function ($query) use ($startTime, $endTime) {
+            $query->where(function ($query) use ($startTime, $endTime) {
+                $query->where('time_to', '>=', $startTime)
+                    ->where('time_from', '<=', $endTime);
+                    // ->whereDate('time_to', now());
+            });
+        })
+        ->exists();
+        // $services_id = $request->services_id;
+        $bookingPaketsExists = DB::table('bookingpakets')
+        ->where(function ($query) use ($startTime, $endTime) {
+        $query->where(function ($query) use ($startTime, $endTime) {
+            $query->where('time_to', '>=', $startTime)
+                ->where('time_from', '<=', $endTime);
+                // ->whereDate('time_to', now());
+        });
+        })
+        ->exists();
+        $EventExists = DB::table('event')
+        ->where(function ($query) use ($startTime, $endTime) {
+        $query->where(function ($query) use ($startTime, $endTime) {
+            $query->where('time_to', '>=', $startTime)
+                ->where('time_from', '<=', $endTime);
+                // ->whereDate('time_to', now());
+        });
+        })
+        ->exists();
+        if ($bookingExists || $bookingPaketsExists || $EventExists) {
+        // Ada booking lain pada waktu yang sama
+        return redirect()->back()->with([
+            'message' => 'Maaf, waktu tersebut sudah dipesan oleh orang lain.',
+            'alert-type' => 'danger'
+        ]);
         } else {
             $startTime = $request->time_from; // Jam mulai booking dalam format datetime
             $endTime = $request->time_to; // Jam selesai booking dalam format datetime
@@ -259,6 +276,13 @@ class BookingpaketsController extends Controller
                 'grand_total' => $total,
                 'status' => !isset($request->status) ? 0 : $request->status
             ]);
+            $notifikasiText = 'Menambahkan Data Booking Paket dengan kode: ' . $bookingpaket->kode;
+
+            $notifikasi = Notifikasi::create([
+                'user_id' => auth()->id(),
+                'to_user' => $bookingpaket->user_id,
+                'text' => $notifikasiText
+            ]);
             // $harga = $services->price * $hours;
             return redirect()->route('bookingpakets.success', [$bookingpaket, $paymentDue, $total])->with([
                 'message' => 'Terimakasih sudah booking, Silahkan upload bukti pembayaran !',
@@ -286,12 +310,55 @@ class BookingpaketsController extends Controller
         $request->validate([
             'bukti_bayar' => 'required',
         ]);
-        $Bookingpaket = Bookingpaket::find($id);
+        
+        $bookingPaket = Bookingpaket::find($id);
+        $kode = $bookingPaket->kode; 
+        
+        if ($bookingPaket->bukti_bayar) {
+            $notifikasiText = 'Mengedit Foto Pembayaran Booking Paket - Dengan Kode: ' . $kode;
+        } else {
+            $notifikasiText = 'Menambahkan Foto Pembayaran Booking Paket - Dengan Kode: ' . $kode;
+        }
+        
+        
         $data['bukti_bayar'] = $request->file('bukti_bayar')->store('bukti_bayar', 'public');
-        $Bookingpaket->update($data);
-        return redirect(route('booking.index'));
+        $bookingPaket->update($data);
+        
+        $notifikasi = Notifikasi::create([
+            'user_id' => auth()->id(),
+            'to_user' => $bookingPaket->user_id,
+            'text' => $notifikasiText
+        ]);
+        
+        return redirect('bookingan-paket-saya')->with('success', 'Data berhasil Di Tambahkan.');
     }
-
+    function uploadBuktiadmin(Request $request, $id)
+    {
+        $request->validate([
+            'bukti_bayar' => 'required',
+        ]);
+        
+        $bookingPaket = Bookingpaket::find($id);
+        $kode = $bookingPaket->kode; 
+        
+        if ($bookingPaket->bukti_bayar) {
+            $notifikasiText = 'Mengedit Foto Pembayaran Booking Paket - Dengan Kode: ' . $kode;
+        } else {
+            $notifikasiText = 'Menambahkan Foto Pembayaran Booking Paket - Dengan Kode: ' . $kode;
+        }
+        
+        
+        $data['bukti_bayar'] = $request->file('bukti_bayar')->store('bukti_bayar', 'public');
+        $bookingPaket->update($data);
+        
+        $notifikasi = Notifikasi::create([
+            'user_id' => auth()->id(),
+            'to_user' => $bookingPaket->user_id,
+            'text' => $notifikasiText
+        ]);
+        
+        return redirect()->back()->with('success', 'Data berhasil Di Tambahkan.');
+    }
     public function mine()
     {
         $bookingpaket = Bookingpaket::where('user_id', auth()->user()->id)->get();
@@ -299,14 +366,94 @@ class BookingpaketsController extends Controller
     }
     public function edit(Request $request, $id)
     {
-        $daftar = [
-            'time_from' => 'required',
-            'time_to' => 'required'
-        ];
-        $validasi = $request->validate($daftar);
+        $services = Services::findOrFail($request->services_id);
 
-        Bookingpaket::where('id', $id)
-            ->update($validasi);
-        return redirect(route('booking-paket.mine'));
+
+        $orderDate = date('Y-m-d H:i:s');
+        $paymentDue = (new \DateTime($orderDate))->modify('+1 hour')->format('Y-m-d H:i:s');
+
+        $startTime = $request->time_from; // Jam mulai booking dalam format datetime
+        $endTime = $request->time_to;
+        // $id_services = $request->services_id;
+        // dd($id_services);
+        $bookingExists = DB::table('bookings')
+        ->where(function ($query) use ($startTime, $endTime) {
+            $query->where(function ($query) use ($startTime, $endTime) {
+                $query->where('time_to', '>=', $startTime)
+                    ->where('time_from', '<=', $endTime);
+                    // ->whereDate('time_to', now());
+            });
+        })
+        ->exists();
+        // $services_id = $request->services_id;
+        $bookingPaketsExists = DB::table('bookingpakets')
+        ->where(function ($query) use ($startTime, $endTime) {
+        $query->where(function ($query) use ($startTime, $endTime) {
+            $query->where('time_to', '>=', $startTime)
+                ->where('time_from', '<=', $endTime);
+                // ->whereDate('time_to', now());
+        });
+        })
+        ->exists();
+        $EventExists = DB::table('event')
+        ->where(function ($query) use ($startTime, $endTime) {
+        $query->where(function ($query) use ($startTime, $endTime) {
+            $query->where('time_to', '>=', $startTime)
+                ->where('time_from', '<=', $endTime);
+                // ->whereDate('time_to', now());
+        });
+        })
+        ->exists();
+        if ($bookingExists || $bookingPaketsExists || $EventExists) {
+        // Ada booking lain pada waktu yang sama
+        return redirect()->back()->with([
+            'message' => 'Maaf, waktu tersebut sudah dipesan oleh orang lain.',
+            'alert-type' => 'danger'
+        ]);
+        } else {
+            $startTime = $request->time_from; // Jam mulai booking dalam format datetime
+            $endTime = $request->time_to; // Jam selesai booking dalam format datetime
+
+            $startDateTime = new DateTime($startTime);
+            $endDateTime = new DateTime($endTime);
+
+            $interval = $startDateTime->diff($endDateTime);
+            $hours = $interval->h;
+            if ($services->jam_paket != '') {
+                if ($hours >= $services->jam_paket) {
+
+                    return redirect()->back()->with([
+                        'message' => 'Maaf, Jam tidak bisa melebihi jam paket',
+                        'alert-type' => 'danger'
+                    ]);
+                }
+            }
+            if ($services->jenis_paket == "Paket Perharga") {
+                $total = $services->price;
+            } else {
+                $total = $services->price * $hours;
+            }
+            $bookingpaket = Bookingpaket::find($id);
+            $bookingpaket->update([
+                'services_id' => $request->services_id,
+                'time_from' =>  $request->time_from,
+                'time_to' =>  $request->time_to,
+                'user_id' => auth()->id(),
+                'grand_total' => $total,
+            ]);
+            $notifikasiText = 'Menambahkan Data Booking Paket dengan kode: ' . $bookingpaket->kode;
+
+            $notifikasi = Notifikasi::create([
+                'user_id' => auth()->id(),
+                'to_user' => $bookingpaket->user_id,
+                'text' => $notifikasiText
+            ]);
+            return redirect()->back();
+        }
+    }
+    public function NotaPemesanan($id)
+    {
+        $bookingpaket = Bookingpaket::find($id);
+        return view('nota_pemesanan_bokingan_paket_saya',compact('bookingpaket'));
     }
 }

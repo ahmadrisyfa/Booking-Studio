@@ -64,12 +64,30 @@
                         <div class="icon-area">
                             <i class="fa fa-music"></i>
                         </div>
-                        <h2>Pembuatan lagu</h2>
-                        <p>Memberikan layanan dan harga terbaik untuk anda dalam membuat lagu</p>
+                        <h2>Layanan bervariasi</h2>
+                        <p>Memberikan layanan sesuai dengan kebutuhan pelanggan</p>
                     </div>
                 </div>
             </div>
         </div>
+        <h4 class="text-center mt-4">PERATURAN PENYEWAAN STUDIO MUSIK</h4>
+        <p class="text-center mt-2" style="color: black">
+            <ol class="text-center text-success">
+                <li>
+                    Jika waktu penyewaan sudah habis, tetapi penyewa masih bermain musik didalam maka akan dikenakan denda 
+                </li>
+                <li>
+                    Tidak boleh membawa makanan & minuman kedalam studio musik
+                </li>
+                <li>
+                    Tidak boleh merokok didalam studio musik
+                </li>
+            </ol>
+        </p>
+        <hr>
+        <h4 class="text-center">Jam Operasional</h4>
+        <p class="text-center text-success">Pukul: 09.00 - 21.00</p>
+        <hr>
     </div>
 </div>
 {{-- <section class="services-area" id="services">
@@ -87,8 +105,8 @@
                 <div class="icon-area">
                     <i class="fa fa-music"></i>
                 </div>
-                <h2>Pembuatan lagu</h2>
-                <p>Memberikan layanan dan harga terbaik untuk anda dalam membuat lagu</p>
+                <h2>Layanan bervariasi</h2>
+                <p>Memberikan layanan yang lengkap sesuai dengan kebutuhan pelanggan</p>
             </div>
         </div>
     </section> --}}
@@ -111,11 +129,11 @@
                 <h3 class="fw-bold">Daftar Studio</h3>
             </div>
             @foreach ($studios as $studios)
-            <div class="modal fade" id="staticBackdrop{{$studios->id}}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel{{$studios->id}}" aria-hidden="true">
+            <div class="modal fade" id="gambarstudios{{$studios->id}}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="gambarstudiosLabel{{$studios->id}}" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
                   <div class="modal-content">
                     <div class="modal-header">
-                      <h5 class="modal-title" id="staticBackdropLabel{{$studios->id}}">Image Studio</h5>
+                      <h5 class="modal-title" id="gambarstudiosLabel{{$studios->id}}">Image Studio</h5>
                       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                       </button>
@@ -150,7 +168,7 @@
             </div>
             <div class="col-lg-4 mb-5">
                 <div class="card" style="width: 18rem;">
-                    <span data-toggle="modal" data-target="#staticBackdrop{{$studios->id}}">
+                    <span data-toggle="modal" data-target="#gambarstudios{{$studios->id}}">
                         @if ($studios->image)
                         @php
                             $imagePaths = json_decode($studios->image);
@@ -163,8 +181,7 @@
                         <h5 class="card-title">{{ $studios->names }}</h5>
                         <p class="card-text">Harga : Rp{{ number_format($studios->price, 2, ',', '.') }} / Jam
                         </p>
-                        <p class="card-text"> Rp{{ number_format($studios->org, 2, ',', '.') }} / Orang</p>
-                        <a href="{{ route('booking', ['studio' => $studios->names]) }}"
+                        <a href="{{url('booking/create/'.$studios->id)}}"
                             class="btn btn-primary">Booking</a>
                     </div>
                 </div>
@@ -175,11 +192,11 @@
             </div>
             {{-- <div class="collumn"> --}}
                 @foreach ($services as $services)
-                <div class="modal fade" id="staticBackdrop{{$services->id}}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel{{$services->id}}" aria-hidden="true">
+                <div class="modal fade" id="gambarservices{{$services->id}}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="gambarservicesLabel{{$services->id}}" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <h5 class="modal-title" id="staticBackdropLabel{{$services->id}}">Image Service</h5>
+                          <h5 class="modal-title" id="gambarservicesLabel{{$services->id}}">Image Service</h5>
                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                           </button>
@@ -214,7 +231,7 @@
                 </div>
                 <div class="col-lg-4 mb-5">
                     <div class="card" style="width: 18rem;">
-                        <span data-toggle="modal" data-target="#staticBackdrop{{$services->id}}">
+                        <span data-toggle="modal" data-target="#gambarservices{{$services->id}}">
                             @if ($services->image)
                             @php
                                 $imagePaths = json_decode($services->image);
@@ -233,7 +250,7 @@
                             </p>
                             <p class="card-text">Harga : Rp{{ number_format($services->price, 2, ',', '.') }}
                             </p>
-                            <a href="{{ route('bookingpakets', ['services' => $services->names]) }}"
+                            <a href="{{url('bookingpakets/create/'.$services->id)}}"
                                 class="btn btn-primary">Booking</a>
                         </div>
                     </div>
@@ -262,16 +279,16 @@
                 <div class="col-md-12" style="text-align: center">
                     <div class="row">
                         <div class="col-md-12 mb-3">
-                            <h5 style="color:white;margin-bottom:10px">Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque ad, rem iusto vero deleniti, atque voluptas est quas libero ratione quo quisquam nihil tempore optio eaque sapiente voluptatem, ut quam!</h5>
+                            <h3 style="color:white;margin-bottom:10px">Contact Us</h3>
                         </div>
                         <div class="col-md-6">                                               
-                            <p><i class="bi bi-geo-alt pr-2"></i>Alamat: Panjen, Wedomartani, Ngemplak, Kenayan, Wedomartani, Kec. Sleman, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55584</p>
-                            <p><i class="bi bi-geo-alt pr-2"></i>Email: contoh@gmmil.com</p>
+                            <p><i class="bi bi-geo-alt pr-2"></i>Alamat:  Surapati Core, Jl. Anggrek Boulevard no.27, Pasirlayung, Jl. Phh. Mustofa No.153, Pasirlayung, Kec. Cibeunying Kidul, Kota Bandung, Jawa Barat 40192</p>
+                            <p><i class="bi bi-geo-alt pr-2"></i>Email: ilhamalamsyah171@gmail.com</p>
 
                         </div>
                         <div class="col-md-6">
 
-                            <p>(+62) - 0895-3212-17600</p>
+                            <p>No Telepon : 0857-2002-2188</p>
                             <p>No Rekening: 54678724648844</p>
                         </div>
                     </div>

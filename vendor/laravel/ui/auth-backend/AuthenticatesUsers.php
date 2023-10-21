@@ -39,7 +39,6 @@ trait AuthenticatesUsers
         if (method_exists($this, 'hasTooManyLoginAttempts') &&
             $this->hasTooManyLoginAttempts($request)) {
             $this->fireLockoutEvent($request);
-
             return $this->sendLockoutResponse($request);
         }
 
@@ -81,13 +80,28 @@ trait AuthenticatesUsers
      * @param  \Illuminate\Http\Request  $request
      * @return bool
      */
-    protected function attemptLogin(Request $request)
+        protected function attemptLogin(Request $request)
     {
+        $credentials = $this->credentials($request);
+
+        $user = User::where($this->username(), $credentials[$this->username()])->first();
+
+        if (!$user) {
+            return false;
+        }
+
+        if ($user->status !== 'Aktif') {
+            throw ValidationException::withMessages([
+                $this->username() => [trans('auth.not_activated')],
+            ]);
+        }
+
         return $this->guard()->attempt(
-            $this->credentials($request), $request->boolean('remember')
+            $credentials, $request->boolean('remember')
         );
     }
 
+    
     /**
      * Get the needed authorization credentials from the request.
      *
@@ -143,9 +157,10 @@ trait AuthenticatesUsers
     protected function sendFailedLoginResponse(Request $request)
     {
         throw ValidationException::withMessages([
-            $this->username() => [trans('auth.failed')],
+            $this->username() => [trans('auth.failed')]          
         ]);
     }
+    
 
     /**
      * Get the login username to be used by the controller.

@@ -65,9 +65,10 @@ class StudiosController extends Controller
         'denda' => $request->input('denda'),
         'image' => json_encode($imagePaths),
         'status' => $request->input('status', 0),
+        'deskripsi' => nl2br($request->input('deskripsi')),
+
          ]);
       
-
         return redirect()->route('admin.studios.index')->with([
             'message' => 'successfully created !',
             'alert-type' => 'success'
@@ -133,6 +134,7 @@ class StudiosController extends Controller
         $service->org = $request->input('org');    
         $service->denda = $request->input('denda');    
         $service->status = $request->input('status', 0);
+        $service->deskripsi = nl2br($request->input('deskripsi'));
 
         $service->save();
 

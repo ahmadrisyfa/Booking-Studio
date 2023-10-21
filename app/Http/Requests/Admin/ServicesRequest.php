@@ -26,7 +26,8 @@ class ServicesRequest extends FormRequest
         return [
             'name' => 'required|string',
             'price' => 'required|numeric',
-            'status' => 'required'
+            'status' => 'required',
+            'deskripsi' => 'required',
         ];
     }
 }

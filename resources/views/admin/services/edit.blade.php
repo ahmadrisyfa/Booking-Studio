@@ -54,8 +54,12 @@
                 </div>
                 <div class="form-group">
                     <label for="name">{{ __('Denda') }}</label>
-                    <input type="text" class="form-control" id="denda" placeholder="{{ __('denda') }}" name="denda"
+                    <input type="number" class="form-control" id="denda" placeholder="{{ __('denda') }}" name="denda"
                         value="{{ old('denda', $service->denda) }}" />
+                </div>
+                <div class="form-group">
+                    <label for="price">{{ __('Deskripsi') }}</label>
+                    <textarea class="form-control" id="deskripsi" placeholder="{{ __('deskripsi') }}" name="deskripsi" value="" style="height: 200px" >{{ old('deskripsi', $service->deskripsi) }}</textarea>
                 </div>
                 <div class="form-group">
                     @if(json_decode($service->image))
@@ -94,8 +98,6 @@
 
 </div>
 @endsection
-
-
 @push('style-alt')
 <link href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.css" rel="stylesheet" />
 @endpush

@@ -13,6 +13,8 @@ use App\Models\Studios;
 use App\Http\Requests\Admin\EventRequest;
 use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
+use App\Models\Notifikasi;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -151,22 +153,61 @@ class DashboardController extends Controller
     }
     public function store(Request $request)
     {
-        // abort_if(Gate::denies('bookingpaket_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-        // $services = Services::findOrFail($request->services_id);
-
-        $validasi = $request->validate([
-            'catatan' => '',
-            'user_id' => '',
-            'time_from' => '',
-            'time_to' => '',
-
+         $startTime = $request->time_from; // Jam mulai booking dalam format datetime
+        $endTime = $request->time_to;
+       $bookingExists = DB::table('bookings')
+        ->where(function ($query) use ($startTime, $endTime) {
+            $query->where(function ($query) use ($startTime, $endTime) {
+                $query->where('time_to', '>=', $startTime)
+                    ->where('time_from', '<=', $endTime);
+                    // ->whereDate('time_to', now());
+            });
+        })
+        ->exists();
+        // $services_id = $request->services_id;
+    $bookingPaketsExists = DB::table('bookingpakets')
+    ->where(function ($query) use ($startTime, $endTime) {
+        $query->where(function ($query) use ($startTime, $endTime) {
+            $query->where('time_to', '>=', $startTime)
+                ->where('time_from', '<=', $endTime);
+                // ->whereDate('time_to', now());
+        });
+    })
+    ->exists();
+    $EventExists = DB::table('event')
+    ->where(function ($query) use ($startTime, $endTime) {
+        $query->where(function ($query) use ($startTime, $endTime) {
+            $query->where('time_to', '>=', $startTime)
+                ->where('time_from', '<=', $endTime);
+                // ->whereDate('time_to', now());
+        });
+    })
+    ->exists();
+    if ($bookingExists || $bookingPaketsExists || $EventExists) {
+        // Ada booking lain pada waktu yang sama
+        return redirect()->back()->with([
+            'message' => 'Maaf, waktu tersebut sudah dipesan oleh orang lain.',
+            'alert-type' => 'danger'
         ]);
-        $validasi['user_id'] = auth()->user()->id;
-        Event::create($validasi);
+    } else {
+          $event = Event::create([
+            'user_id' => auth()->id(),
+            'catatan' => $request->catatan,
+            'time_to' => $request->time_to,
+            'time_from' => $request->time_from,
+        ]);
 
+        $notifikasiText = 'Menambahkan Data Event Dendan Catatan: ' . $event->catatan;
+
+        $notifikasi = Notifikasi::create([
+            'user_id' => auth()->id(),
+            'to_user' => $event->user_id,
+            'text' => $notifikasiText
+        ]);
         return redirect('admin/dashboard')->with([
             'message' => 'successfully created !',
             'alert-type' => 'success'
         ]);
+        }
     }
 }

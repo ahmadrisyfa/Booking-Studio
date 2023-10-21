@@ -40,10 +40,19 @@
                     </div>
                     <div class="form-group">
                         <label for="roles">{{ __('Role') }}</label>
-                        <select name="roles[]" id="roles" class="form-control select2" multiple="multiple" required>
+                        <select name="roles[]" id="roles" class="form-control select2" required>
                             @foreach($roles as $id => $roles)
                                 <option value="{{ $id }}" {{ (in_array($id, old('roles', [])) || isset($role) && $role->roles->contains($id)) ? 'selected' : '' }}>{{ $roles }}</option>
                             @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="status">{{ __('Status') }}</label>
+                        <select name="status" id="status" class="form-control select2" required>
+                            <option value="" selected disabled style="text-align: center">-- Silahkan Pilih Status --</option>
+                          <option value="Aktif">Aktif</option>
+                          <option value="Non Aktif">Non Aktif</option>
+
                         </select>
                     </div>
                     <button type="submit" class="btn btn-primary btn-block">{{ __('Save') }}</button>

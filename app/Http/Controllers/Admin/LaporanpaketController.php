@@ -156,29 +156,30 @@ class LaporanpaketController extends Controller
         $bookingpaket = Bookingpaket::where('status', 2)
             ->where('time_from', '>=', $fromDate)
             ->where('time_to', '<=', $toDate);
-
+        
         if (!empty($jenis_paket)) {
             $bookingpaket = $bookingpaket->whereHas('services', function ($query) use ($jenis_paket) {
                 $query->where('jenis_paket', $jenis_paket);
             });
         }
         $bookingpaket = $bookingpaket->get();
-
-        $totalharga = Bookingpaket::where('status', 2);
-        if (!empty($jenis_paket)) {
-            $totalharga->whereHas('services', function ($query) use ($jenis_paket) {
-                $query->where('jenis_paket', $jenis_paket);
-            });
-        }
-        $totalharga = $totalharga->sum('grand_total');
-
-        $jumlah = Bookingpaket::where('status', 2);
-        if (!empty($jenis_paket)) {
-            $jumlah->whereHas('services', function ($query) use ($jenis_paket) {
-                $query->where('jenis_paket', $jenis_paket);
-            });
-        }
-        $jumlah = $jumlah->count();
+        
+        // $totalharga = Bookingpaket::where('status', 2);
+        // if (!empty($jenis_paket)) {
+        //     $totalharga->whereHas('services', function ($query) use ($jenis_paket) {
+        //         $query->where('jenis_paket', $jenis_paket);
+        //     });
+        // }
+        $totalharga = $bookingpaket->sum('grand_total');
+        
+        // $jumlah = Bookingpaket::where('status', 2);
+        // if (!empty($jenis_paket)) {
+        //     $jumlah->whereHas('services', function ($query) use ($jenis_paket) {
+        //         $query->where('jenis_paket', $jenis_paket);
+        //     });
+        // }
+        $jumlah = $bookingpaket->count();
+        
 
 
         return view('admin.laporan.indexpaket', compact('bookingpaket', 'totalharga', 'jumlah', 'tanggal'));
